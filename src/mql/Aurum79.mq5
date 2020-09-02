@@ -19,7 +19,6 @@
 
 //----
 // Global variables
-int fileHandler;
 
 // Initialization
 int OnInit() {
@@ -39,9 +38,8 @@ void OnTick() {
 
   if (SymbolInfoTick(Symbol(), tick)) {
     string time = DoubleToString(tick.time);
-    fileHandler = FileHandle("tick.txt");
-
     string tickInfo = tick.bid + "," + tick.ask;
-    WriteFile(fileHandler, tickInfo);
+    Print(tickInfo);
+    WriteFile("tick.txt", tickInfo);
   }
 }

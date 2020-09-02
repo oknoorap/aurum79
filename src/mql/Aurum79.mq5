@@ -25,8 +25,11 @@ int fileHandler;
 // Initialization
 int OnInit() {
   Print("Start ", pkgName, pkgVersion);
-  fileHandler = FileHandle(TickDataDirectory + "\\tick.txt");
+  
+  string tickPath = TickDataDirectory + "//tick.txt";
+  fileHandler = FileHandle(tickPath);
   WriteFile(fileHandler, "testing");
+  Print("Write file to", tickPath);
   return INIT_SUCCEEDED;
 }
 

@@ -36,9 +36,10 @@ int OnInit() {
 // On Tick
 void OnTick() {
   MqlTick tick;
+
   if (SymbolInfoTick(Symbol(), tick)) {
     string time = DoubleToString(tick.time);
-    fileHandler = FileHandle("tick-" + time + ".txt");
+    fileHandler = FileHandle("tick.txt");
 
     string tickInfo = tick.bid + "," + tick.ask;
     WriteFile(fileHandler, tickInfo);

@@ -24,9 +24,6 @@ int fileHandler;
 // Initialization
 int OnInit() {
   Print("Start ", pkgName, " ", "v", pkgVersion);
-  
-  fileHandler = FileHandle("aurum-tick.txt");
-  WriteFile(fileHandler, "testing");
   return INIT_SUCCEEDED;
 }
 
@@ -38,4 +35,7 @@ int OnInit() {
 
 // On Tick
 void OnTick() {
+  datetime currentTime = iTime(_Symbol, _Period, 0);
+  fileHandler = FileHandle("aurum-tick.txt");
+  WriteFile(fileHandler, currentTime);
 }

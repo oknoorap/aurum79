@@ -1,5 +1,6 @@
 //---
 // Aurum is Gold in Latin
+// Aurum79 v1.00
 //---
 #define pkgName "Aurum79"
 #define pkgVersion "1.00"
@@ -9,19 +10,22 @@
 #property description pkgDescription
 #property copyright pkgCopyright
 
-// Input params
-input FileSelectDialog dataDirectory ".//data.txt"
-
-// Import files
+//---
+// Import sections
 #include "libs/fs.mq5"
 
-// Vars init
+//----
+// Input params
+input string dataDirectory;
+
+//----
+// Global variables
 int fileHandler;
 
 // Initialization
 int OnInit() {
   Print("Start ", pkgName, pkgVersion);
-  fileHandler = FileHandle(".//data.txt");
+  fileHandler = FileHandle(dataDirectory);
   WriteFile(fileHandler, "testing");
   return INIT_SUCCEEDED;
 }

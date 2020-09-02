@@ -7,6 +7,5 @@ void WriteFile(string path, string content) {
   int handler = FileHandle(path);
   if (handler != INVALID_HANDLE) {
     FileWriteString(handler, content);
-    FileFlush(handler);
   }
 }

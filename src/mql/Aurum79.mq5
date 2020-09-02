@@ -19,6 +19,7 @@
 
 //----
 // Global variables
+int fileHandler;
 
 // Initialization
 int OnInit() {
@@ -36,7 +37,10 @@ int OnInit() {
 void OnTick() {
   MqlTick tick;
   if (SymbolInfoTick(Symbol(), tick)) {
-    string tickInfo = tick.time + "," + tick.bid + "," + tick.ask;
-    WriteFile("aurum-tick.txt", tickInfo);
+    string time = DoubleToString(tick.time);
+    fileHandler = FileHandle("tick-" + time + ".txt");
+
+    string tickInfo = tick.bid + "," + tick.ask;
+    WriteFile(fileHandler, tickInfo);
   }
 }

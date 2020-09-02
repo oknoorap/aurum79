@@ -3,8 +3,7 @@ int FileHandle(string path) {
   return handler;
 }
 
-void WriteFile(string path, string content) {
-  int handler = FileHandle(path);
+void WriteFile(int handler, string content) {
   if (handler != INVALID_HANDLE) {
     FileWriteString(handler, content);
   }

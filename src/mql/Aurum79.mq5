@@ -16,7 +16,7 @@
 
 //----
 // Input params
-input string dataDirectory;
+input string TickDataDirectory;
 
 //----
 // Global variables
@@ -25,7 +25,7 @@ int fileHandler;
 // Initialization
 int OnInit() {
   Print("Start ", pkgName, pkgVersion);
-  fileHandler = FileHandle(dataDirectory);
+  fileHandler = FileHandle(TickDataDirectory + "\\tick.txt");
   WriteFile(fileHandler, "testing");
   return INIT_SUCCEEDED;
 }

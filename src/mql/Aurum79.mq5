@@ -19,7 +19,6 @@
 
 //----
 // Global variables
-int fileHandler;
 
 // Initialization
 int OnInit() {
@@ -36,6 +35,5 @@ int OnInit() {
 // On Tick
 void OnTick() {
   string currentTime = TimeToString(iTime(_Symbol, _Period, 0));
-  fileHandler = FileHandle("aurum-tick.txt");
-  WriteFile(fileHandler, currentTime);
+  WriteFile("aurum-tick.txt", currentTime);
 }

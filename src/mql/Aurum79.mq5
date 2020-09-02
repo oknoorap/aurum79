@@ -35,6 +35,8 @@ int OnInit() {
 
 // On Tick
 void OnTick() {
-  string tickInfo = currentTick();
+  string latestTick = currentTick();
+  string tickInfo = StringFormat("%s", latestTick);
+
   WriteFile("tick.txt", tickInfo);
 }

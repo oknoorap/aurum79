@@ -23,7 +23,7 @@ int fileHandler;
 
 // Initialization
 int OnInit() {
-  Print("Start ", pkgName, pkgVersion);
+  Print("Start ", pkgName, " ", "v", pkgVersion);
   
   fileHandler = FileHandle("aurum-tick.txt");
   WriteFile(fileHandler, "testing");

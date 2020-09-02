@@ -1,4 +1,9 @@
 string currentTick() {
   MqlTick tick;
-  return DoubleToString(tick.ask) + "," + DoubleToString(tick.bid);
+
+  if (SymbolInfoTick(Symbol(), tick)) {
+    return tick.ask + "," + tick.bid;
+  }
+
+  return "";
 }

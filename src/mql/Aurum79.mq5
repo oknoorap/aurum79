@@ -26,7 +26,7 @@ int fileHandler;
 int OnInit() {
   Print("Start ", pkgName, pkgVersion);
   
-  string tickPath = TickDataDirectory + "//tick.txt";
+  string tickPath = "C:\\tick.txt";
   fileHandler = FileHandle(tickPath);
   WriteFile(fileHandler, "testing");
   Print("Write file to", tickPath);

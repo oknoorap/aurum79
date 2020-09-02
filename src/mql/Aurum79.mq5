@@ -36,5 +36,5 @@ int OnInit() {
 void OnTick() {
   MqlTick tick;
   string tickInfo = tick.time + "," + tick.bid + "," + tick.ask;
-  WriteFile("aurum-tick.txt", currentTime);
+  WriteFile("aurum-tick.txt", tickInfo);
 }

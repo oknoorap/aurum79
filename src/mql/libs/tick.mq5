@@ -1,4 +1,4 @@
 string currentTick() {
   MqlTick tick;
-  return StringFormat("%%.%df,%%.%df", tick.ask, tick.bid);
+  return StringFormat("%s", DoubleToString(tick.ask), DoubleToString(tick.bid));
 }

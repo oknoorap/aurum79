@@ -13,6 +13,7 @@
 //---
 // Import sections
 #include "libs/fs.mq5"
+#include "libs/tick.mq5"
 
 //----
 // Input params
@@ -34,12 +35,6 @@ int OnInit() {
 
 // On Tick
 void OnTick() {
-  MqlTick tick;
-
-  if (SymbolInfoTick(Symbol(), tick)) {
-    string time = DoubleToString(tick.time);
-    string tickInfo = tick.bid + "," + tick.ask;
-    Print(tickInfo);
-    WriteFile("tick.txt", tickInfo);
-  }
+  string tickInfo = currentTick();
+  WriteFile("tick.txt", tickInfo);
 }

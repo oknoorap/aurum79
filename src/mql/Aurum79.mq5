@@ -25,10 +25,8 @@ int fileHandler;
 int OnInit() {
   Print("Start ", pkgName, pkgVersion);
   
-  string tickPath = TerminalInfoString(TERMINAL_DATA_PATH) + "\\tick.txt";
-  fileHandler = FileHandle(tickPath);
+  fileHandler = FileHandle("aurum-tick.txt");
   WriteFile(fileHandler, "testing");
-  Print("Write tick data to ", tickPath);
   return INIT_SUCCEEDED;
 }
 

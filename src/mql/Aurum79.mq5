@@ -38,6 +38,4 @@ int OnInit() {
 
 // On Tick
 void OnTick() {
-  datetime currentTime = iTime(_Symbol, _Period, 0);
-  Print(currentTime);
 }

@@ -1,11 +1,11 @@
-bool isValidCurrentTick() {
+bool isValidCurrentTick(MqlTick tick) {
   return SymbolInfoTick(Symbol(), tick);
 }
 
 string currentTick() {
   MqlTick tick;
 
-  if (isValidCurrentTick()) {
+  if (isValidCurrentTick(tick)) {
     return tick.ask + "," + tick.bid;
   }
 

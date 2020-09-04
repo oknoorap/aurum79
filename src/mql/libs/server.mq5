@@ -187,14 +187,12 @@ void postMessage(string content) {
 
   for (int i = connSize - 1; i >= 0; --i) {
     SOCKET64 client = _connections[i];
-    if (isInvalidSocket(client)) {
-      continue;
-    }
-
-    int response = send(client, messages, buffCount, 0);
-    if (isSocketError(response)) {
-      Print("Post message error: ", getLastSocketErrorMessage());
-      closeConnection(client);
+    if (!isInvalidSocket(client)) {
+      int response = send(client, messages, buffCount, 0);
+      if (isSocketError(response)) {
+        Print("Post message error: ", getLastSocketErrorMessage());
+        closeConnection(client);
+      }
     }
   }
 }

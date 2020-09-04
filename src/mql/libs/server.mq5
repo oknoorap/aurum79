@@ -7,7 +7,7 @@ ushort _port = 3333;
 
 //---
 // Create server with given port.
-void createServer(ushort port) {
+SOCkET64 createServer(ushort port) {
   _port = port;
   EventSetTimer(1);
   return _server;
@@ -36,6 +36,7 @@ void acceptClients() {
     int len = sizeof(ref_sockaddr);
 
     client = accept(_server, socketAddressRef.ref, len);
+
     if (isInvalidSocket(client)) {
       int err = WSAGetLastError();
       if(err == WSAEWOULDBLOCK) {
@@ -47,9 +48,9 @@ void acceptClients() {
       return;
     }
 
-    int response = enableNonBlockMode(client);
-    if (enableNonBlockMode(response)) {
-      Print("Client socket error: "+ string(response));
+    int response = enableSocketNonBlockMode(client);
+    if (response != NO_ERROR) {
+      Print("Client socket error: ", string(response));
       continue;
     }
 
@@ -58,7 +59,7 @@ void acceptClients() {
     ArrayResize(_connections, connSize + 1);
     _connections[connSize] = client;
 
-    // 
+    // Show client info.
     char ipAddresses[23] = {0};
     ref_sockaddr_in clientAddress;
     clientAddress.in = socketAddressRef.in;
@@ -121,7 +122,7 @@ SOCKET64 startServer() {
   }
 
   // Enable Non-blocking Mode.
-  response = enableNonBlockMode(_server);
+  response = enableSocketNonBlockMode(_server);
   if (response != NO_ERROR) {
     return destroyServer(messages[3]);
   }
@@ -140,12 +141,16 @@ SOCKET64 startServer() {
 //--
 // Destroy server by killing all connections
 SOCKET64 destroyServer(string message) {
-  Print(message, getLastSocketErrorMessage());
+  if (message != "") {
+    Print(message, getLastSocketErrorMessage());
+  } else {
+    Print(message);
+  }
 
   if(!isInvalidSocket(_server)) {
     closesocket(_server);
     _server = INVALID_SOCKET64;
-    return;
+    return _server;
   }
 
   cleanupConnections();
@@ -187,7 +192,7 @@ bool isSocketError(int op) {
   return op == SOCKET_ERROR;
 }
 
-int enableNonBlockMode(SOCKET64 socket) {
+int enableSocketNonBlockMode(SOCKET64 socket) {
   int nonblock = 1;
   return ioctlsocket(socket, (int)FIONBIO, nonblock);
 }
@@ -195,6 +200,6 @@ int enableNonBlockMode(SOCKET64 socket) {
 //--
 // Step server by killing timers.
 void stopServer(SOCKET64 &liveserver) {
-  liveserver = destroyServer();
+  liveserver = destroyServer("Stop server");
   EventKillTimer();
 }

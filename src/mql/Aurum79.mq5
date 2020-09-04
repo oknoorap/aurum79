@@ -36,5 +36,7 @@ void OnDeinit(const int reason) {
 
 // On Tick
 void OnTick() {
-  postMessage("hello world");
+  string ratesHistory = getRatesHistory();
+  string latestTick = currentTick();
+  postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
 }

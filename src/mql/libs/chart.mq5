@@ -1,3 +1,6 @@
+
+#include "libs/json.mqh"
+
 bool isValidTick(MqlTick& tick) {
   return SymbolInfoTick(Symbol(), tick);
 }
@@ -6,12 +9,16 @@ bool isValidTick(MqlTick& tick) {
 // Get current tick
 string currentTick() {
   MqlTick tick;
-
   if (!isValidTick(tick)) {
     return "";
   }
 
-  return DoubleToString(tick.ask) + "," + DoubleToString(tick.bid);
+  JSON ticks, json;
+  ticks[0] = tick.ask;
+  ticks[0] = tick.bid;
+  json.Set(ticks);
+
+  return json.Serialize();
 }
 
 //---
@@ -22,16 +29,20 @@ string getRatesHistory() {
    
    int isCopied = CopyRates(_Symbol, _Period, 0, 70, rates);
    int historySize = ArraySize(rates);
-   string outputFormat = "%G,%G,%G,%G ";
-   string history = "";
+   JSON history;
    
    if (!isCopied) {
-      return history;
+    return history.Serialize();
    }
 
    for (int i = 0; i < historySize; i++) {
-      history += StringFormat(outputFormat, rates[i].open, rates[i].high, rates[i].low, rates[i].close);
+    JSON ohlc;
+    ohlc[0] = rates[i].open;
+    ohlc[1] = rates[i].high;
+    ohlc[2] = rates[i].low;
+    ohlc[3] = rates[i].close;
+    history.Add(ohlc);
    }
 
-   return history;
+   return history.Serialize();
 }

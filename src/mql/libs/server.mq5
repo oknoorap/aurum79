@@ -4,6 +4,7 @@ SOCKET64 _server = INVALID_SOCKET64;
 SOCKET64 _connections[];
 string _host = "0.0.0.0";
 ushort _port = 3333;
+string _message = "";
 
 //---
 // Create server with given port.
@@ -14,9 +15,10 @@ SOCKET64 createServer(ushort port) {
 
 //--
 // Timer runtime.
-void OnTimer() {
+void serverRuntime() {
   if (isInvalidSocket(_server)) {
     startServer();
+    onMessage();
     return;
   }
 
@@ -196,6 +198,29 @@ void postMessage(string content) {
       closeConnection(_connections[i]);
     }
   }
+}
+
+//--
+// Receive message from clients
+void onMessage() {
+  int buffSize = 1024;
+  char buff[buffSize] = {0};
+  ref_sockaddr clients = {0};
+  int clientCount = ArraySize(clients.ref);
+  int response = recvfrom(_server, buff, buffSize, 0, clients.ref, clientCount);
+
+  if (response >= 0)
+    _message = CharArrayToString(buff);
+  } else {
+    int err = WSAGetLastError();
+    if (err != WSAEWOULDBLOCK) {
+      destroyServer("Error on message: ");
+    }
+  }
+}
+
+string clientMessage() {
+  return _message;
 }
 
 string getLastSocketErrorMessage() {

@@ -18,7 +18,14 @@
 
 //----
 // Global variables
+// Server stuff.
 SOCKET64 server = INVALID_SOCKET64;
+// Chart stuff.
+string ratesHistory;
+string latestTick;
+string latestClientMessage;
+// Order stuff.
+bool isOrder = false;
 
 // Initialization
 // Start server on port 3333.
@@ -26,6 +33,25 @@ int OnInit() {
   server = createServer(3333);
   EventSetTimer(1);
   return INIT_SUCCEEDED;
+}
+
+// Start timer
+void OnTimer() {
+  serverRuntime();
+
+  string message = clientMessage();
+  if (latestClientMessage != message) {
+    latestClientMessage = message;
+  }
+
+  if (!isOrder) {
+    if (latestClientMessage == "buy") {
+      Print("buy right now");
+    }
+    if (latestClientMessage == "sell") {
+      Print("sell right now");
+    }
+  }
 }
 
 // Deinitialize
@@ -36,7 +62,8 @@ void OnDeinit(const int reason) {
 
 // On Tick
 void OnTick() {
-  string ratesHistory = getRatesHistory();
-  string latestTick = currentTick();
+  // Send data to client.
+  ratesHistory = getRatesHistory();
+  latestTick = currentTick();
   postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
 }

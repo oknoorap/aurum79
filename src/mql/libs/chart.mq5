@@ -15,7 +15,7 @@ string currentTick() {
 
   JSON ticks, json;
   ticks[0] = tick.ask;
-  ticks[0] = tick.bid;
+  ticks[1] = tick.bid;
   json.Set(ticks);
 
   return json.Serialize();

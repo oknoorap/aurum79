@@ -209,7 +209,7 @@ void onMessage() {
   int clientCount = ArraySize(clients.ref);
   int response = recvfrom(_server, buff, buffSize, 0, clients.ref, clientCount);
 
-  if (response >= 0)
+  if (response >= 0) {
     _message = CharArrayToString(buff);
   } else {
     int err = WSAGetLastError();

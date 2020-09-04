@@ -1,5 +1,5 @@
 
-#include "libs/json.mqh"
+#include "json.mqh"
 
 bool isValidTick(MqlTick& tick) {
   return SymbolInfoTick(Symbol(), tick);

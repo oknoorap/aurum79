@@ -36,12 +36,5 @@ void OnDeinit(const int reason) {
 
 // On Tick
 void OnTick() {
-  // WriteFile(
-  //   "tick-data.txt",
-  //   StringFormat(
-  //     "%s %s",
-  //     currentTick(),
-  //     getRatesHistory()
-  //   )
-  // );
+  postMessage("hello world");
 }

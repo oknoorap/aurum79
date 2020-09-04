@@ -220,6 +220,6 @@ int enableSocketNonBlockMode(SOCKET64 socket) {
 // Step server by killing timers.
 void stopServer(SOCKET64 &liveserver) {
   liveserver = destroyServer("");
-  Print("Stop server on port: ", string(_port))
+  Print("Stop server on port: ", string(_port));
   EventKillTimer();
 }

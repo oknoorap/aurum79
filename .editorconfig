@@ -1,6 +1,6 @@
 root = true
 
-[*.{mq5,bat}]
+[*.{ts,js,json,mq5,bat}]
 indent_style = space
 indent_size = 2
 

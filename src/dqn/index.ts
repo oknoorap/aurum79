@@ -1,6 +1,7 @@
-export const sum = (a: number, b: number) => {
-  if ('development' === process.env.NODE_ENV) {
-    console.log('boop');
-  }
-  return a + b;
-};
+import SocketClient from './client';
+
+// Receive message from MT5
+const client = new SocketClient();
+client.onmessage(data => {
+  console.log(data);
+});

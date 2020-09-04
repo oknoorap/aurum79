@@ -7,8 +7,11 @@
     "node": ">=10"
   },
   "scripts": {
-    "start": "tsdx watch --entry src/dqn/index.ts",
-    "build": "tsdx build --entry src/dqn/index.ts",
+    "dev": "tsdx watch --entry src/dqn/index.ts",
+    "start": "node dist/index",
+    "build": "yarn build:js && yarn build:mql",
+    "build:js": "tsdx build --entry src/dqn/index.ts",
+    "build:mql": "cd scripts && build",
     "test": "tsdx test --entry src/dqn/index.ts",
     "lint": "tsdx lint --entry src/dqn/index.ts"
   },

@@ -36,7 +36,8 @@ void acceptClients() {
 
     client = accept(_server, socketAddressRef.ref, len);
     if (isInvalidSocket(client)) {
-      if(err==WSAEWOULDBLOCK) {
+      int err = WSAGetLastError();
+      if(err == WSAEWOULDBLOCK) {
         Comment("\nWAITING CLIENT ("+ string(TimeCurrent()) +")");
       } else {
         destroyServer("Client socket error: ");
@@ -52,9 +53,9 @@ void acceptClients() {
     }
 
     // Add client to connections list.
-    int connectionSize = ArraySize(_connections);
-    ArrayResize(_connections, connectionSize + 1);
-    _connections[n] = client;
+    int connSize = ArraySize(_connections);
+    ArrayResize(_connections, connSize + 1);
+    _connections[connSize] = client;
 
     // 
     char ipAddresses[23] = {0};
@@ -110,7 +111,7 @@ SOCKET64 startServer() {
   ref_sockaddr socketAddressRef;
   socketAddressRef.in= socketAddress;
 
-  int addressBinder = bind(_server, socketAddressRef.ref, sizeof(socketAddress)));
+  int addressBinder = bind(_server, socketAddressRef.ref, sizeof(socketAddress));
   if (isSocketError(addressBinder)) {
     int err = WSAGetLastError();
     if (err != WSAEISCONN) {
@@ -192,6 +193,7 @@ int enableNonBlockMode(SOCKET64 socket) {
 
 //--
 // Step server by killing timers.
-void stopServer() {
+void stopServer(SOCKET64 server) {
+  destroyServer();
   EventKillTimer();
 }

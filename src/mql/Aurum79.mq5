@@ -23,7 +23,7 @@ SOCKET64 server = INVALID_SOCKET64;
 // Initialization
 // Start server on port 3333.
 int OnInit() {
-  server = createServer(3333, "Start ", pkgName, " ", "v", pkgVersion);
+  server = createServer(3333);
   return INIT_SUCCEEDED;
 }
 

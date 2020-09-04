@@ -179,9 +179,9 @@ void closeConnection(SOCKET64 &socket) {
 //--
 // Post message to clients
 void postMessage(string content) {
-  char messages[];
-  StringToCharArray(string, messages)
-  int contentSize = StringBufferLen(content);
+  char messages;
+  int contentCount = StringBufferLen(content);
+  StringToCharArray(string, messages, contentCount)
 
   int connSize = ArraySize(_connections);
   for (int i = connSize - 1; i >= 0; --i) {
@@ -190,7 +190,7 @@ void postMessage(string content) {
       continue;
     }
 
-    int response = send(client, messages, contentSize, 0);
+    int response = send(client, messages, contentCount, 0);
     if (isSocketError(response)) {
       Print("Post message error: ", getLastSocketErrorMessage());
       closeConnection(client);

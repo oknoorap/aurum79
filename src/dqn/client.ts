@@ -15,7 +15,7 @@ class SocketClient {
 
     this.client.on('data', (data: string) => {
       for (const fn of this.onMessageCallbackList) {
-        fn(data);
+        fn(data.toString().trim());
       }
     });
 

@@ -41,7 +41,7 @@ void acceptClients() {
       if(err == WSAEWOULDBLOCK) {
         Comment("\nWAITING CLIENT ("+ string(TimeCurrent()) +")");
       } else {
-        destroyServer("Client socket error: ", getLastSocketErrorMessage());
+        destroyServer("Client socket error: " + getLastSocketErrorMessage());
       }
 
       return;

@@ -10,6 +10,7 @@ ushort _port = 3333;
 void createServer(ushort port) {
   _port = port;
   EventSetTimer(1);
+  return &_server;
 }
 
 //--

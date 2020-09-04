@@ -10,7 +10,7 @@ ushort _port = 3333;
 void createServer(ushort port) {
   _port = port;
   EventSetTimer(1);
-  return &_server;
+  return _server;
 }
 
 //--
@@ -84,7 +84,7 @@ SOCKET64 startServer() {
 
   // Startup.
   int response = WSAStartup(MAKEWORD(2, 2), data);
-  if (res != 0) {
+  if (response != 0) {
     Print(messages[0], string(response));
     return INVALID_SOCKET64;
   }
@@ -139,7 +139,7 @@ SOCKET64 startServer() {
 
 //--
 // Destroy server by killing all connections
-void destroyServer(string message) {
+SOCKET64 destroyServer(string message) {
   Print(message, getLastSocketErrorMessage());
 
   if(!isInvalidSocket(_server)) {
@@ -154,7 +154,7 @@ void destroyServer(string message) {
 
 //--
 // Cleanup all connections.
-void cleanupConnections(string message) {
+void cleanupConnections() {
   for (int i = ArraySize(_connections) - 1; i>= 0; --i) {
     closeConnection(_connections[i]);
   }
@@ -184,17 +184,17 @@ bool isInvalidSocket(SOCKET64 socket) {
 }
 
 bool isSocketError(int op) {
-  return op == SOCkET_ERROR;
+  return op == SOCKET_ERROR;
 }
 
 int enableNonBlockMode(SOCKET64 socket) {
-  int noblock = 1;
+  int nonblock = 1;
   return ioctlsocket(socket, (int)FIONBIO, nonblock);
 }
 
 //--
 // Step server by killing timers.
-void stopServer(SOCKET64 server) {
-  destroyServer();
+void stopServer(SOCKET64 &liveserver) {
+  liveserver = destroyServer();
   EventKillTimer();
 }

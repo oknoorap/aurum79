@@ -179,11 +179,12 @@ void closeConnection(SOCKET64 &socket) {
 //--
 // Post message to clients
 void postMessage(string content) {
-  char messages;
+  char messages[];
   StringToCharArray(content, messages, 0, StringLen(content));
-  int buffCount = StringBufferLen(messages);
 
+  int buffCount = ArraySize(messages);
   int connSize = ArraySize(_connections);
+
   for (int i = connSize - 1; i >= 0; --i) {
     SOCKET64 client = _connections[i];
     if (isInvalidSocket(client)) {

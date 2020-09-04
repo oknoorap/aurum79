@@ -13,30 +13,34 @@
 //---
 // Import sections
 #include "libs/fs.mq5"
-#include "libs/tick.mq5"
-
-//----
-// Input params
+#include "libs/chart.mq5"
+#include "libs/server.mq5"
 
 //----
 // Global variables
+SOCKET64 server = INVALID_SOCKET64;
 
 // Initialization
+// Start server on port 3333.
 int OnInit() {
-  Print("Start ", pkgName, " ", "v", pkgVersion);
+  server = createServer(3333, "Start ", pkgName, " ", "v", pkgVersion);
   return INIT_SUCCEEDED;
 }
 
-// On Start
-// void OnStart() {
-//   int fileHandler = FileHandle("data.txt");
-//   WriteFile(fileHandler, "testing");
-// }
+// Deinitialize
+// Stop server and close all connections.
+void OnDeinit(const int reason) {
+  stopServer(server);
+}
 
 // On Tick
 void OnTick() {
-  string latestTick = currentTick();
-  string tickInfo = StringFormat("%s", latestTick);
-
-  WriteFile("tick.txt", tickInfo);
+  // WriteFile(
+  //   "tick-data.txt",
+  //   StringFormat(
+  //     "%s %s",
+  //     currentTick(),
+  //     getRatesHistory()
+  //   )
+  // );
 }

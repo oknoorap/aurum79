@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "dist/node/index.js",
+  "typings": "dist/node/index.d.ts",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch --entry src/dqn/index.ts",
+    "build": "tsdx build --entry src/dqn/index.ts",
+    "test": "tsdx test --entry src/dqn/index.ts",
+    "lint": "tsdx lint --entry src/dqn/index.ts"
+  },
+  "peerDependencies": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "dqn",
+  "author": "Ribhararnus Pracutian",
+  "module": "dist/dqn.esm.js",
+  "devDependencies": {
+    "husky": "^4.2.5",
+    "tsdx": "^0.13.3",
+    "tslib": "^2.0.1",
+    "typescript": "^4.0.2"
+  }
+}

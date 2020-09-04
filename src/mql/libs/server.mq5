@@ -41,7 +41,7 @@ void acceptClients() {
       if(err == WSAEWOULDBLOCK) {
         Comment("\nWAITING CLIENT ("+ string(TimeCurrent()) +")");
       } else {
-        destroyServer("Client socket error: ");
+        destroyServer("Client socket error: ", getLastSocketErrorMessage());
       }
 
       return;
@@ -97,7 +97,7 @@ SOCKET64 startServer() {
   }
 
   // Bind server address in specified port
-  Print(messages[1], _port);
+  Print(messages[1], string(_port));
   char channels[];
   StringToCharArray(_host, channels);
 
@@ -141,8 +141,6 @@ SOCKET64 startServer() {
 SOCKET64 destroyServer(string message) {
   if (message != "") {
     Print(message, getLastSocketErrorMessage());
-  } else {
-    Print(message);
   }
 
   if(!isInvalidSocket(_server)) {
@@ -198,6 +196,7 @@ int enableSocketNonBlockMode(SOCKET64 socket) {
 //--
 // Step server by killing timers.
 void stopServer(SOCKET64 &liveserver) {
-  liveserver = destroyServer("Stop server");
+  liveserver = destroyServer("");
+  Print("Stop server on port: ", string(_port))
   EventKillTimer();
 }

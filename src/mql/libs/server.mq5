@@ -7,9 +7,8 @@ ushort _port = 3333;
 
 //---
 // Create server with given port.
-SOCkET64 createServer(ushort port) {
+SOCKET64 createServer(ushort port) {
   _port = port;
-  EventSetTimer(1);
   return _server;
 }
 
@@ -66,7 +65,7 @@ void acceptClients() {
     inet_ntop(clientAddress.in.sin_family, clientAddress.ref, ipAddresses, sizeof(ipAddresses));
 
     printf("Accept new client %s : %d", CharArrayToString(ipAddresses), ntohs(ipAddresses.in.sin_port));
-  } while(client != INVALID_SOCKET64);
+  } while(!isInvalidSocket(client));
 }
 
 //---

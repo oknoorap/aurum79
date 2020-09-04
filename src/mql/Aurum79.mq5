@@ -24,6 +24,7 @@ SOCKET64 server = INVALID_SOCKET64;
 // Start server on port 3333.
 int OnInit() {
   server = createServer(3333);
+  EventSetTimer(1);
   return INIT_SUCCEEDED;
 }
 

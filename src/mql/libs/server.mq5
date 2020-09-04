@@ -61,9 +61,9 @@ void acceptClients() {
     // Show client info.
     char ipAddresses[23] = {0};
     ref_sockaddr_in clientAddress;
-    clientAddress.in = socketAddressRef;
+    clientAddress.in = socketAddressRef.in;
     inet_ntop(clientAddress.in.sin_family, clientAddress.ref, ipAddresses, sizeof(ipAddresses));
-    printf("Accept new client %s : %d", CharArrayToString(ipAddresses), ntohs(ipAddresses.in.sin_port));
+    printf("Accept new client %s : %d", CharArrayToString(ipAddresses), ntohs(clientAddress.in.sin_port));
   } while(!isInvalidSocket(client));
 }
 

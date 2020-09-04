@@ -186,13 +186,14 @@ void postMessage(string content) {
   int connSize = ArraySize(_connections);
 
   for (int i = connSize - 1; i >= 0; --i) {
-    SOCKET64 client = _connections[i];
-    if (!isInvalidSocket(client)) {
-      int response = send(client, messages, buffCount, 0);
-      if (isSocketError(response)) {
-        Print("Post message error: ", getLastSocketErrorMessage());
-        closeConnection(client);
-      }
+    if (isInvalidSocket(_connections[i])) {
+      continue;
+    }
+
+    int response = send(_connections[i], messages, buffCount, 0);
+    if (isSocketError(response)) {
+      Print("Post message error: ", getLastSocketErrorMessage());
+      closeConnection(_connections[i]);
     }
   }
 }

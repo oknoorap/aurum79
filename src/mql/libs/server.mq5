@@ -180,8 +180,8 @@ void closeConnection(SOCKET64 &socket) {
 // Post message to clients
 void postMessage(string content) {
   char messages;
-  int contentCount = StringBufferLen(content);
-  StringToCharArray(string, messages, contentCount)
+  StringToCharArray(content, messages, 0, StringLen(content));
+  int buffCount = StringBufferLen(messages);
 
   int connSize = ArraySize(_connections);
   for (int i = connSize - 1; i >= 0; --i) {
@@ -190,7 +190,7 @@ void postMessage(string content) {
       continue;
     }
 
-    int response = send(client, messages, contentCount, 0);
+    int response = send(client, messages, buffCount, 0);
     if (isSocketError(response)) {
       Print("Post message error: ", getLastSocketErrorMessage());
       closeConnection(client);

@@ -212,9 +212,8 @@ void onMessage() {
       continue;
     }
 
-    int buffSize = 1024;
-    char buff[buffSize];
-    int response = recv(_connections[i], buff, buffSize, 0);
+    char buff[1024];
+    int response = recv(_connections[i], buff, 1024, 0);
 
     if (response >= 0) {
       _message = CharArrayToString(buff);

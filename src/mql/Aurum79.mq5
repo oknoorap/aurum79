@@ -38,15 +38,15 @@ int OnInit() {
 // Start timer
 void OnTimer() {
   serverRuntime(clientMessage);
-
-  if (!isOrder) {
-    if (latestClientMessage == "buy") {
-      Print("buy right now");
-    }
-    if (latestClientMessage == "sell") {
-      Print("sell right now");
-    }
-  }
+  postMessage("testing");
+  // if (!isOrder) {
+  //   if (latestClientMessage == "buy") {
+  //     Print("buy right now");
+  //   }
+  //   if (latestClientMessage == "sell") {
+  //     Print("sell right now");
+  //   }
+  // }
 }
 
 // Deinitialize
@@ -58,7 +58,7 @@ void OnDeinit(const int reason) {
 // On Tick
 void OnTick() {
   // Send data to client.
-  ratesHistory = getRatesHistory();
-  latestTick = currentTick();
-  postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
+//   ratesHistory = getRatesHistory();
+//   latestTick = currentTick();
+//   postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
 }

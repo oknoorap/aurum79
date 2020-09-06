@@ -7,25 +7,31 @@ class SocketClient {
   onMessageCallbackList: onMessageCallback[] = [];
 
   constructor(port: number = 3333) {
-    this.client = new net.Socket();
+    const socket = new net.Socket();
 
-    this.client.connect(port, () => {
+    socket.connect(port, () => {
       console.log(`Connected to socket port ${port}`);
     });
 
-    this.client.on('data', (data: string) => {
+    socket.on('data', (data: string) => {
       for (const fn of this.onMessageCallbackList) {
         fn(data.toString().trim());
       }
     });
 
-    this.client.on('close', () => {
+    socket.on('close', () => {
       console.log('Connection closed');
     });
+
+    this.client = socket;
   }
 
   onmessage(fn: onMessageCallback) {
     this.onMessageCallbackList.push(fn);
+  }
+
+  postMessage(message: string) {
+    this.client.write(message);
   }
 }
 

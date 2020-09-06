@@ -15,7 +15,9 @@ SOCKET64 createServer(ushort port) {
 
 //--
 // Timer runtime.
-void serverRuntime() {
+void serverRuntime(string message) {
+  _message = message;
+
   if (isInvalidSocket(_server)) {
     startServer();
     onMessage();
@@ -203,24 +205,27 @@ void postMessage(string content) {
 //--
 // Receive message from clients
 void onMessage() {
-  int buffSize = 1024;
-  char buff[buffSize] = {0};
-  ref_sockaddr clients = {0};
-  int clientCount = ArraySize(clients.ref);
-  int response = recvfrom(_server, buff, buffSize, 0, clients.ref, clientCount);
+  int connSize = ArraySize(_connections);
 
-  if (response >= 0) {
-    _message = CharArrayToString(buff);
-  } else {
-    int err = WSAGetLastError();
-    if (err != WSAEWOULDBLOCK) {
-      destroyServer("Error on message: ");
+  for (int i = connSize - 1; i >= 0; --i) {
+    if (isInvalidSocket(_connections[i])) {
+      continue;
+    }
+
+    int buffSize = 1024;
+    char buff[buffSize];
+    int response = recv(_connections[i], buff, buffSize, 0);
+
+    if (response >= 0) {
+      _message = CharArrayToString(buff);
+    } else {
+      int err = WSAGetLastError();
+      if (err != WSAEWOULDBLOCK) {
+        Print("Server on message error: ", getLastSocketErrorMessage());
+        closeConnection(_connections[i]);
+      }
     }
   }
-}
-
-string clientMessage() {
-  return _message;
 }
 
 string getLastSocketErrorMessage() {

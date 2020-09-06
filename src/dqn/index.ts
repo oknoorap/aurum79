@@ -4,4 +4,5 @@ import SocketClient from './client';
 const client = new SocketClient();
 client.onmessage(data => {
   console.log(data);
+  client.postMessage('Hello from client');
 });

@@ -18,11 +18,11 @@ SOCKET64 createServer(ushort port) {
 void serverRuntime() {
   if (isInvalidSocket(_server)) {
     startServer();
-    onMessage();
     return;
   }
 
   acceptClients();
+  receiveMessage();
 }
 
 //--
@@ -202,7 +202,7 @@ void postMessage(string content) {
 
 //--
 // Receive message from clients
-void onMessage() {
+void receiveMessage() {
   int connSize = ArraySize(_connections);
 
   for (int i = connSize - 1; i >= 0; --i) {
@@ -210,10 +210,10 @@ void onMessage() {
       continue;
     }
 
-    char buff[1024];
+    uchar buff[];
     int response = recv(_connections[i], buff, 1024, 0);
 
-    if (response >= 0) {
+    if (response > 0) {
       string receivedMessage = CharArrayToString(buff);
       if (receivedMessage != "") {
         _message = CharArrayToString(buff);

@@ -210,7 +210,7 @@ void receiveMessage() {
       continue;
     }
 
-    uchar buff[1024];
+    uchar buff[];
     int response = recv(_connections[i], buff, 1024, 0);
 
     if (isSocketError(response)) {

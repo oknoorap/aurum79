@@ -15,9 +15,7 @@ SOCKET64 createServer(ushort port) {
 
 //--
 // Timer runtime.
-void serverRuntime(string message) {
-  _message = message;
-
+void serverRuntime() {
   if (isInvalidSocket(_server)) {
     startServer();
     onMessage();
@@ -228,6 +226,10 @@ void onMessage() {
       }
     }
   }
+}
+
+string getClientMessage() {
+  return _message;
 }
 
 string getLastSocketErrorMessage() {

@@ -216,7 +216,10 @@ void onMessage() {
     int response = recv(_connections[i], buff, 1024, 0);
 
     if (response >= 0) {
-      _message = CharArrayToString(buff);
+      string receivedMessage = CharArrayToString(buff);
+      if (receivedMessage != "") {
+        _message = CharArrayToString(buff);
+      }
     } else {
       int err = WSAGetLastError();
       if (err != WSAEWOULDBLOCK) {

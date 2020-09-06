@@ -40,12 +40,12 @@ int OnInit() {
 void OnTimer() {
   serverRuntime(clientMessage);
 
-  if (!isSendFirstMessage) {
-    postMessage("testing");
+  postMessage("testing");
+
+  if (clientMessage != "") {
+    Print(clientMessage);
     isSendFirstMessage = true;
   }
-
-  Print(clientMessage);
   // if (!isOrder) {
   //   if (latestClientMessage == "buy") {
   //     Print("buy right now");

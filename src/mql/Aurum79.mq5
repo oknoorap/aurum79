@@ -26,6 +26,7 @@ string latestTick;
 string clientMessage;
 // Order stuff.
 bool isOrder = false;
+bool isSendFirstMessage = false;
 
 // Initialization
 // Start server on port 3333.
@@ -38,7 +39,13 @@ int OnInit() {
 // Start timer
 void OnTimer() {
   serverRuntime(clientMessage);
-  postMessage("testing");
+
+  if (!isSendFirstMessage) {
+    postMessage("testing");
+    isSendFirstMessage = true;
+  }
+
+  Print(clientMessage);
   // if (!isOrder) {
   //   if (latestClientMessage == "buy") {
   //     Print("buy right now");

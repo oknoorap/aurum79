@@ -210,20 +210,14 @@ void receiveMessage() {
       continue;
     }
 
-    uchar buff[];
+    uchar buff[1024];
     int response = recv(_connections[i], buff, 1024, 0);
 
-    if (response > 0) {
-      string receivedMessage = CharArrayToString(buff);
-      if (receivedMessage != "") {
-        _message = CharArrayToString(buff);
-      }
+    if (isSocketError(response)) {
+      Print("Server on message error: ", getLastSocketErrorMessage());
+      closeConnection(_connections[i]);
     } else {
-      int err = WSAGetLastError();
-      if (err != WSAEWOULDBLOCK) {
-        Print("Server on message error: ", getLastSocketErrorMessage());
-        closeConnection(_connections[i]);
-      }
+      _message = CharArrayToString(buff);
     }
   }
 }

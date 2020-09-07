@@ -203,33 +203,32 @@ void postMessage(string content) {
 //--
 // Receive message from clients
 void receiveMessage() {
-  if(isInvalidSocket(_server)) {
-    return;
-  }
+  uchar buff[1024];
+  int response = recv(_server, buff, 1024, 0);
 
-  char buff[1024];
-  int buffsize = 1024;
-  int r = 0;
-  int response = 0;
-
-  do {
-    response = recv(_server, buff, buffsize, 0);
-
-    if (response < 0) {
-      int err = WSAGetLastError();
-      if (err != WSAEWOULDBLOCK) {
-        destroyServer("Server error on message: ");
-      }
-      break;
-    }
-
-    if (response == 0 && r == 0) {
-      destroyServer("Server error on message: ");
-    }
-
-    r += response;
+  if (isSocketError(response)) {
+    Print("Server on message error: ", getLastSocketErrorMessage());
+  } else {
     _message = CharArrayToString(buff);
-  } while(response > 0 && response >= buffsize);
+  }
+  
+  // int connSize = ArraySize(_connections);
+
+  // for (int i = connSize - 1; i >= 0; --i) {
+  //   if (isInvalidSocket(_connections[i])) {
+  //     continue;
+  //   }
+
+  //   uchar buff[1024];
+  //   int response = recv(_connections[i], buff, 1024, 0);
+
+  //   if (isSocketError(response)) {
+  //     Print("Server on message error: ", getLastSocketErrorMessage());
+  //     closeConnection(_connections[i]);
+  //   } else {
+  //     _message = CharArrayToString(buff);
+  //   }
+  // }
 }
 
 string getClientMessage() {

@@ -18,12 +18,12 @@ SOCKET64 createServer(ushort port) {
 void serverRuntime(string &message) {
   if (isInvalidSocket(_server)) {
     startServer();
-    message = _message;
     return;
   }
 
   acceptClients();
   receiveMessage();
+  message = _message;
 }
 
 //--
@@ -222,8 +222,9 @@ void receiveMessage() {
       closeConnection(_connections[i]);
     } else {
       int err = WSAGetLastError();
-      if (err == WSAEWOULDBLOCK) {
+      if (err != WSAEWOULDBLOCK) {
         Print("Server on message error: ", getLastSocketErrorMessage());
+        closeConnection(_connections[i]);
       }
     }
   }

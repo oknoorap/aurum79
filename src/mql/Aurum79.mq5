@@ -62,12 +62,8 @@ void OnTick() {
   // Send data to client.
   JSON json;
   json["type"] = "tick";
-
-  JSON latestTick = currentTick();
-  json["tick"] = latestTick;
-
-  JSON ratesHistory = getRatesHistory();
-  json["history"] = ratesHistory;
+  json["tick"].Set(currentTick());
+  json["history"].Set(getRatesHistory());
 
   postMessage(json.Serialize());
 }

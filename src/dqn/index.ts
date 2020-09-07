@@ -5,7 +5,7 @@ const client = new SocketClient();
 
 // Receive message
 client.onmessage(data => {
-  console.log(data);
+  console.log(JSON.parse(data));
 });
 
 setInterval(() => {

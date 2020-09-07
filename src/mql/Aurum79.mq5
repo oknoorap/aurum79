@@ -40,7 +40,7 @@ int OnInit() {
 void OnTimer() {
   serverRuntime(clientMessage);
 
-  if (clientMessage != "") {
+  if (clientMessage != null || clientMessage != "") {
     Print(clientMessage);
   }
   // if (!isOrder) {
@@ -62,7 +62,13 @@ void OnDeinit(const int reason) {
 // On Tick
 void OnTick() {
   // Send data to client.
-  // ratesHistory = getRatesHistory();
-  // latestTick = currentTick();
-  // postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
+  ratesHistory = getRatesHistory();
+  latestTick = currentTick();
+
+  JSON json;
+  json["type"] = "tick";
+  json["tick"] = latestTick;
+  json["history"] = ratesHistory;
+
+  postMessage(json.Serlialize());
 }

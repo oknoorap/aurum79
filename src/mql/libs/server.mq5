@@ -18,11 +18,25 @@ SOCKET64 createServer(ushort port) {
 void serverRuntime() {
   if (isInvalidSocket(_server)) {
     startServer();
+
+    do {
+      char recvbuf[1024];
+      int res = recv(_server, recvbuf, 1024, 0);
+
+      if (res > 0) {
+        Print("Bytes received: ", CharArrayToString(recvbuff));
+      }
+      else if (res == 0) {
+        Print("Connection closed");
+      } else {
+        Print("recv failed:", WSAGetLastError());
+      }
+    } while(res > 0);
     return;
   }
 
   acceptClients();
-  receiveMessage();
+  // receiveMessage();
 }
 
 //--
@@ -213,7 +227,7 @@ void receiveMessage() {
     uchar buff[1024];
     int response = recv(_connections[i], buff, 1024, 0);
 
-    if (isSocketError(response)) {
+    if (response == 0) {
       Print("Server on message error: ", getLastSocketErrorMessage());
       closeConnection(_connections[i]);
     } else {

@@ -21,22 +21,8 @@ void serverRuntime() {
     return;
   }
 
-  char recvbuf[1024];
-  int res = 0;
-  do {
-    res = recv(_server, recvbuf, 1024, 0);
-    if (res > 0) {
-      Print("Bytes received: ", CharArrayToString(recvbuf));
-    }
-    else if (res == 0) {
-      Print("Connection closed");
-    } else {
-      Print("recv failed:", WSAGetLastError());
-    }
-  } while(res > 0);
-
   acceptClients();
-  // receiveMessage();
+  receiveMessage();
 }
 
 //--
@@ -227,14 +213,14 @@ void receiveMessage() {
     uchar buff[1024];
     int response = recv(_connections[i], buff, 1024, 0);
 
-    if (response == 0) {
+    if (response > 0) {
+      _message = CharArrayToString(buff);
+      Print("message ", _message);
+    } else if (response == 0) {
       Print("Server on message error: ", getLastSocketErrorMessage());
       closeConnection(_connections[i]);
     } else {
-      if (response > 0) {
-        _message = CharArrayToString(buff);
-        Print("message ", _message);
-      }
+      Print("Server on message error: ", getLastSocketErrorMessage());
     }
   }
 }

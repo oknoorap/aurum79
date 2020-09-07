@@ -23,6 +23,7 @@ SOCKET64 server = INVALID_SOCKET64;
 // Chart stuff.
 string ratesHistory;
 string latestTick;
+string clientMessage;
 // Order stuff.
 bool isOrder = false;
 bool isSendFirstMessage = false;
@@ -37,14 +38,11 @@ int OnInit() {
 
 // Start timer
 void OnTimer() {
-  serverRuntime();
-  postMessage("ping");
+  serverRuntime(clientMessage);
 
-  string clientMessage = getClientMessage();
   if (clientMessage != "") {
     Print(clientMessage);
   }
-
   // if (!isOrder) {
   //   if (latestClientMessage == "buy") {
   //     Print("buy right now");
@@ -64,7 +62,7 @@ void OnDeinit(const int reason) {
 // On Tick
 void OnTick() {
   // Send data to client.
-//   ratesHistory = getRatesHistory();
-//   latestTick = currentTick();
-//   postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
+  // ratesHistory = getRatesHistory();
+  // latestTick = currentTick();
+  // postMessage(StringFormat("[%s, %s]", latestTick, ratesHistory));
 }

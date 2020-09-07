@@ -15,9 +15,10 @@ SOCKET64 createServer(ushort port) {
 
 //--
 // Timer runtime.
-void serverRuntime() {
+void serverRuntime(string &message) {
   if (isInvalidSocket(_server)) {
     startServer();
+    message = _message;
     return;
   }
 
@@ -212,15 +213,18 @@ void receiveMessage() {
 
     uchar buff[1024];
     int response = recv(_connections[i], buff, 1024, 0);
+    _message = "";
 
     if (response > 0) {
       _message = CharArrayToString(buff);
-      Print("message ", _message);
     } else if (response == 0) {
       Print("Server on message error: ", getLastSocketErrorMessage());
       closeConnection(_connections[i]);
     } else {
-      Print("Server on message error: ", getLastSocketErrorMessage());
+      int err = WSAGetLastError();
+      if (err == WSAEWOULDBLOCK) {
+        Print("Server on message error: ", getLastSocketErrorMessage());
+      }
     }
   }
 }

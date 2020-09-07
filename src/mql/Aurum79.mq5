@@ -39,7 +39,9 @@ void OnTimer() {
   serverRuntime(clientMessage);
 
   if (clientMessage != "") {
-    Print(clientMessage);
+    JSON json;
+    json.Deserialize(clientMessage);
+    Print("current time is ", json["time"].ToInt());
   }
   // if (!isOrder) {
   //   if (latestClientMessage == "buy") {

@@ -213,14 +213,15 @@ void receiveMessage() {
     uchar buff[1024];
     int response = recv(_connections[i], buff, 1024, 0);
 
-    // if (response>0) {
-      _message = CharArrayToString(buff);
-      Print("response ", response);
-      Print("message ", _message);
-    // } else {
-    //   Print("Server on message error: ", getLastSocketErrorMessage());
-    //   closeConnection(_connections[i]);
-    // }
+    if (isSocketError(response)) {
+      Print("Server on message error: ", getLastSocketErrorMessage());
+      closeConnection(_connections[i]);
+    } else {
+      if (response > 0) {
+        _message = CharArrayToString(buff);
+        Print("message ", _message);
+      }
+    }
   }
 }
 

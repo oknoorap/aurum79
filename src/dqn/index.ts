@@ -9,5 +9,5 @@ client.onmessage(data => {
 });
 
 setInterval(() => {
-  client.postMessage(`now = ${new Date().toString()}`);
+  client.postMessage(JSON.stringify({ time: Date.now() }));
 }, 1000);

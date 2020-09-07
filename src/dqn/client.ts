@@ -4,12 +4,14 @@ type onMessageCallback = (data: string) => void;
 
 class SocketClient {
   client: net.Socket;
+  isConnected: boolean = false;
   onMessageCallbackList: onMessageCallback[] = [];
 
   constructor(port: number = 3333) {
     const socket = new net.Socket();
 
     socket.connect(port, () => {
+      this.isConnected = true;
       console.log(`Connected to socket port ${port}`);
     });
 
@@ -20,6 +22,7 @@ class SocketClient {
     });
 
     socket.on('close', () => {
+      this.isConnected = false;
       console.log('Connection closed');
     });
 
@@ -31,7 +34,9 @@ class SocketClient {
   }
 
   postMessage(message: string) {
-    this.client.write(message);
+    if (this.isConnected) {
+      this.client.write(message);
+    }
   }
 }
 

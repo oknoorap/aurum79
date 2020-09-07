@@ -62,7 +62,7 @@ void OnTick() {
   // Send data to client.
   JSON json;
   json["type"] = "tick";
-  json["tick"] = currentTick();
-  json["history"] = getRatesHistory();
+  json["tick"] = &currentTick();
+  json["history"] = &getRatesHistory();
   postMessage(json.Serlialize());
 }

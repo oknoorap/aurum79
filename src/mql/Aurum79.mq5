@@ -32,7 +32,7 @@ bool isSendFirstMessage = false;
 // Start server on port 3333.
 int OnInit() {
   server = createServer(3333);
-  EventSetTimer(1);
+  EventSetMillisecondTimer(100);
   return INIT_SUCCEEDED;
 }
 

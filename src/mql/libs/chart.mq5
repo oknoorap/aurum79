@@ -9,15 +9,15 @@ bool isValidTick(MqlTick& tick) {
 // Get current tick
 JSONType currentTick() {
   MqlTick tick;
+  JSON ticks, json;
+
   if (!isValidTick(tick)) {
-    return "";
+    return json;
   }
 
-  JSON ticks, json;
   ticks[0] = tick.ask;
   ticks[1] = tick.bid;
   json.Set(ticks);
-
   return json;
 }
 
@@ -32,7 +32,7 @@ JSONType getRatesHistory() {
    JSON history;
    
    if (!isCopied) {
-    return history.Serialize();
+    return history;
    }
 
    for (int i = 0; i < historySize; i++) {

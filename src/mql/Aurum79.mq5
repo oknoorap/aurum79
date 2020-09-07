@@ -20,11 +20,9 @@
 // Global variables
 // Server stuff.
 SOCKET64 server = INVALID_SOCKET64;
+
 // Chart stuff.
-string ratesHistory;
-string latestTick;
 string clientMessage;
-// Order stuff.
 bool isOrder = false;
 bool isSendFirstMessage = false;
 
@@ -62,13 +60,9 @@ void OnDeinit(const int reason) {
 // On Tick
 void OnTick() {
   // Send data to client.
-  ratesHistory = getRatesHistory();
-  latestTick = currentTick();
-
   JSON json;
   json["type"] = "tick";
-  json["tick"] = latestTick;
-  json["history"] = ratesHistory;
-
+  json["tick"] = currentTick();
+  json["history"] = getRatesHistory();
   postMessage(json.Serlialize());
 }

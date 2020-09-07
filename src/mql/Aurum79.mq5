@@ -63,10 +63,10 @@ void OnTick() {
   JSON json;
   json["type"] = "tick";
 
-  JSONType::JSArray latestTick = currentTick();
+  JSON latestTick = currentTick();
   json["tick"] = latestTick;
 
-  JSONType::JSArray ratesHistory = getRatesHistory();
+  JSON ratesHistory = getRatesHistory();
   json["history"] = ratesHistory;
 
   postMessage(json.Serlialize());

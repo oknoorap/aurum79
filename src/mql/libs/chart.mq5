@@ -7,7 +7,7 @@ bool isValidTick(MqlTick& tick) {
 
 //--
 // Get current tick
-JSONType currentTick() {
+JSArray currentTick() {
   MqlTick tick;
   JSON ticks, json;
 
@@ -23,7 +23,7 @@ JSONType currentTick() {
 
 //---
 // Get tick history
-JSONType getRatesHistory() {
+JSArray getRatesHistory() {
    MqlRates rates[];
    ArraySetAsSeries(rates, true);
    

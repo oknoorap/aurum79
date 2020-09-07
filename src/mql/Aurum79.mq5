@@ -22,7 +22,7 @@
 SOCKET64 server = INVALID_SOCKET64;
 
 // Chart stuff.
-string clientMessage;
+string clientMessage = "";
 bool isOrder = false;
 bool isSendFirstMessage = false;
 
@@ -38,7 +38,7 @@ int OnInit() {
 void OnTimer() {
   serverRuntime(clientMessage);
 
-  if (clientMessage != null || clientMessage != "") {
+  if (clientMessage != "") {
     Print(clientMessage);
   }
   // if (!isOrder) {
@@ -69,5 +69,5 @@ void OnTick() {
   JSON ratesHistory = getRatesHistory();
   json["history"] = ratesHistory;
 
-  postMessage(json.Serlialize());
+  postMessage(json.Serialize());
 }

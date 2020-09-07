@@ -203,32 +203,23 @@ void postMessage(string content) {
 //--
 // Receive message from clients
 void receiveMessage() {
-  uchar buff[1024];
-  int response = recv(_server, buff, 1024, 0);
+  int connSize = ArraySize(_connections);
 
-  if (isSocketError(response)) {
-    Print("Server on message error: ", getLastSocketErrorMessage());
-  } else {
-    _message = CharArrayToString(buff);
+  for (int i = connSize - 1; i >= 0; --i) {
+    if (isInvalidSocket(_connections[i])) {
+      continue;
+    }
+
+    uchar buff[1024];
+    int response = recv(_connections[i], buff, 1024, 0);
+
+    if (isSocketError(response)) {
+      Print("Server on message error: ", getLastSocketErrorMessage());
+      closeConnection(_connections[i]);
+    } else {
+      _message = CharArrayToString(buff);
+    }
   }
-  
-  // int connSize = ArraySize(_connections);
-
-  // for (int i = connSize - 1; i >= 0; --i) {
-  //   if (isInvalidSocket(_connections[i])) {
-  //     continue;
-  //   }
-
-  //   uchar buff[1024];
-  //   int response = recv(_connections[i], buff, 1024, 0);
-
-  //   if (isSocketError(response)) {
-  //     Print("Server on message error: ", getLastSocketErrorMessage());
-  //     closeConnection(_connections[i]);
-  //   } else {
-  //     _message = CharArrayToString(buff);
-  //   }
-  // }
 }
 
 string getClientMessage() {

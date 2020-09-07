@@ -2,5 +2,5 @@
 type "%cd%\..\src\mql\Aurum79.log"
 mkdir dist
 IF EXIST "%cd%\..\src\mql\Aurum79.ex5" (
-  xcopy "%cd%\..\src\mql\Aurum79.ex5" "%cd%\..\dist\Aurum79.ex5" /Y
+  echo f | xcopy /f /y "%cd%\..\src\mql\Aurum79.ex5" "%cd%\..\dist\Aurum79.ex5"
 )

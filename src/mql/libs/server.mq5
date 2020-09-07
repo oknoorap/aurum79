@@ -218,17 +218,17 @@ void receiveMessage() {
     if (response < 0) {
       int err = WSAGetLastError();
       if (err != WSAEWOULDBLOCK) {
-        return destroyServer("Server error on message: ");
+        destroyServer("Server error on message: ");
       }
       break;
     }
 
     if (response == 0 && r == 0) {
-      return destroyServer("Server error on message: ");
+      destroyServer("Server error on message: ");
     }
 
     r += response;
-    _message = CharArrayToString(response);
+    _message = CharArrayToString(buff);
   } while(response > 0 && response >= buffsize);
 }
 

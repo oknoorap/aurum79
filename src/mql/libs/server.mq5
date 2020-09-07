@@ -19,12 +19,12 @@ void serverRuntime() {
   if (isInvalidSocket(_server)) {
     startServer();
 
+    char recvbuf[1024];
+    int res = 0;
     do {
-      char recvbuf[1024];
-      int res = recv(_server, recvbuf, 1024, 0);
-
+      res = recv(_server, recvbuf, 1024, 0);
       if (res > 0) {
-        Print("Bytes received: ", CharArrayToString(recvbuff));
+        Print("Bytes received: ", CharArrayToString(recvbuf));
       }
       else if (res == 0) {
         Print("Connection closed");

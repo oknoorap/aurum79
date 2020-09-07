@@ -215,8 +215,8 @@ void receiveMessage() {
 
     // if (response>0) {
       _message = CharArrayToString(buff);
-      Print(response);
-      Print(_message);
+      Print("response ", response);
+      Print("message ", _message);
     // } else {
     //   Print("Server on message error: ", getLastSocketErrorMessage());
     //   closeConnection(_connections[i]);

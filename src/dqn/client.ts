@@ -2,15 +2,18 @@ import net from 'net';
 
 type onMessageCallback = (data: string) => void;
 
+export enum MessageType {
+  Tick = 'tick',
+}
 class SocketClient {
   client: net.Socket;
   isConnected: boolean = false;
   onMessageCallbackList: onMessageCallback[] = [];
 
-  constructor(port: number = 3333) {
+  constructor(port: number = 3333, host: string = '0.0.0.0') {
     const socket = new net.Socket();
 
-    socket.connect(port, () => {
+    socket.connect(port, host, () => {
       this.isConnected = true;
       console.log(`Connected to socket port ${port}`);
     });

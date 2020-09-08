@@ -8,8 +8,6 @@
     "sourceMap": true,
     "rootDir": "./src/dqn",
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",

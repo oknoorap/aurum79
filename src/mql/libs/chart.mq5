@@ -41,6 +41,7 @@ JSON getRatesHistory() {
     ohlc[1] = rates[i].high;
     ohlc[2] = rates[i].low;
     ohlc[3] = rates[i].close;
+    ohlc[4] = TimeToString(rates[i].time);
     history.Add(ohlc);
    }
 

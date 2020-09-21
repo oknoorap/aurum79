@@ -7,15 +7,12 @@ const chart = new Chart();
 
 // Receive message
 client.onmessage(json => {
-  const { type = null, ...data } = JSON.parse(json);
+  const { type = null, ...ticks } = JSON.parse(json);
 
   switch (type) {
     case MessageType.Tick:
-      const { tick, history } = data;
-      chart.predict({
-        tick,
-        history,
-      });
+      const data = chart.getData(ticks);
+      console.log(data);
       break;
   }
 });

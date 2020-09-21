@@ -182,7 +182,7 @@ void closeConnection(SOCKET64 &socket) {
 //--
 // Post message to clients
 void postMessage(string content) {
-  char messages[];
+  uchar messages[];
   StringToCharArray(content, messages, 0, StringLen(content));
 
   int buffCount = ArraySize(messages);

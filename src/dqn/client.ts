@@ -9,19 +9,35 @@ class SocketClient {
   client: net.Socket;
   isConnected: boolean = false;
   onMessageCallbackList: onMessageCallback[] = [];
+  data: string = '';
 
-  constructor(port: number = 3333, host: string = '0.0.0.0') {
+  constructor(
+    port: string | number = (process.env.PORT as string) || 3333,
+    host: string = (process.env.HOST as string) || '0.0.0.0'
+  ) {
     const socket = new net.Socket();
 
-    socket.connect(port, host, () => {
+    socket.connect(parseInt(port.toString()), host, () => {
       this.isConnected = true;
       console.log(`Connected to socket port ${port}`);
     });
 
     socket.on('data', (data: string) => {
-      for (const fn of this.onMessageCallbackList) {
-        fn(data.toString().trim());
+      // Buffering until json is valid
+      let index = 0;
+      while (this.data[index] !== undefined) {
+        try {
+          const json = this.data.substring(0, index);
+          JSON.parse(json);
+          for (const onMessage of this.onMessageCallbackList) {
+            onMessage(json);
+          }
+          this.data = this.data.substring(index, this.data.length);
+        } catch {
+          index++;
+        }
       }
+      this.data += data;
     });
 
     socket.on('close', () => {

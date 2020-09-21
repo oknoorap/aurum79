@@ -16,11 +16,6 @@
     "lint": "tsdx lint --entry src/dqn/index.ts"
   },
   "peerDependencies": {},
-  "husky": {
-    "hooks": {
-      "pre-commit": "tsdx lint"
-    }
-  },
   "prettier": {
     "printWidth": 80,
     "semi": true,

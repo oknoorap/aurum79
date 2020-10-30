@@ -7,13 +7,13 @@
     "node": ">=10"
   },
   "scripts": {
-    "dev": "tsdx watch --entry src/dqn/index.ts",
+    "dev": "tsdx watch --entry src/ml/index.ts",
     "start": "node dist/index",
     "build": "yarn build:js && yarn build:mql",
-    "build:js": "tsdx build --entry src/dqn/index.ts",
+    "build:js": "tsdx build --entry src/ml/index.ts",
     "build:mql": "cd scripts && build",
-    "test": "tsdx test --entry src/dqn/index.ts",
-    "lint": "tsdx lint --entry src/dqn/index.ts"
+    "test": "tsdx test --entry src/ml/index.ts",
+    "lint": "tsdx lint --entry src/ml/index.ts"
   },
   "peerDependencies": {},
   "prettier": {
@@ -22,9 +22,9 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "dqn",
+  "name": "aurum-79",
   "author": "Ribhararnus Pracutian",
-  "module": "dist/dqn.esm.js",
+  "module": "dist/ml.esm.js",
   "devDependencies": {
     "husky": "^4.2.5",
     "tsdx": "^0.13.3",
@@ -32,6 +32,10 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
-    "decimal.js": "^10.2.0"
+    "@tensorflow/tfjs": "^2.7.0",
+    "@tensorflow/tfjs-node": "^2.7.0",
+    "decimal.js": "^10.2.0",
+    "nanoid": "^3.1.16",
+    "wait-port": "^0.2.9"
   }
 }

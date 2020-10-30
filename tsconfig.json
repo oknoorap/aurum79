@@ -6,7 +6,7 @@
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
-    "rootDir": "./src/dqn",
+    "rootDir": "src/ml",
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

@@ -65,11 +65,11 @@ class Chart implements IChart {
     this.isNewTick = this.lastDataTime !== lastDataTime;
     this.lastDataTime = lastDataTime;
 
-    const datahistory = history.reverse();
-    const data = datahistory.reduce<Data[]>(
-      (prev, current, index, datahistory) => {
+    const data = history
+      .reverse()
+      .reduce<Data[]>((prev, current, index, history) => {
         const [open, high, low, close] = current;
-        const [pOpen, pHigh, pLow, pClose] = datahistory?.[index - 1] ?? [];
+        const [pOpen, pHigh, pLow, pClose] = history?.[index - 1] ?? [];
         const reducer = [...prev];
 
         if (open && high && low && close && pOpen && pHigh && pLow && pClose) {
@@ -94,9 +94,7 @@ class Chart implements IChart {
         }
 
         return reducer;
-      },
-      []
-    );
+      }, []);
 
     this.data = data;
     this.tick = {

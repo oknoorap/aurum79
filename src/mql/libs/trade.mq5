@@ -18,15 +18,15 @@ void sendOrder(string action, ushort takeProfitInput, ushort stopLossInput) {
     digits = 10;
   }
 
-  double orderAction = action == "buy" ? symbolInfo.Ask() : symbolInfo.Bid();
+  double orderAction = (action == "buy") ? symbolInfo.Ask() : symbolInfo.Bid();
   double point = symbolInfo.Point() * digits;
   
   double takeProfitPoint = takeProfitInput * point;
-  double takeProfitValue = action == "buy" ? orderAction + takeProfitPoint : orderAction - takeProfitPoint;
+  double takeProfitValue = (action == "buy") ? orderAction + takeProfitPoint : orderAction - takeProfitPoint;
   double takeProfit = (takeProfitPoint == 0.0) ? 0.0 : takeProfitValue;
 
   double stopLossPoint = stopLossInput * point;
-  double stopLossValue  = action == "buy" ? orderAction - stopLossPoint : orderAction + stopLossPoint;
+  double stopLossValue  = (action == "buy") ? orderAction - stopLossPoint : orderAction + stopLossPoint;
   double stopLoss = (stopLossPoint == 0.0) ? 0.0 : stopLossValue;
 
   return trade.Buy(

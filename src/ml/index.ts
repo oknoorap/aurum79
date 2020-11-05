@@ -12,6 +12,25 @@ async function start() {
 
   // Receive message from socket.
   const client = new SocketClient();
+
+  // Buy.
+  const actionBuy = () => {
+    client.postMessage(
+      JSON.stringify({
+        type: 'action',
+      })
+    );
+  };
+
+  // Sell.
+  const actionSell = () => {
+    client.postMessage(
+      JSON.stringify({
+        type: 'sell',
+      })
+    );
+  };
+
   client.onmessage(json => {
     const { type = null, ...jsonData } = JSON.parse(json);
 
@@ -25,12 +44,14 @@ async function start() {
         });
 
         if (chart.isNewTick) {
-          agent.predicts(series);
-          console.log(agent.result());
+          actionBuy();
+
+          // agent.predicts(series);
+          // console.log(agent.result());
         }
         break;
 
-      // On Result
+      // On trade result win / lose
       case ReceivedMessage.Result:
         break;
     }

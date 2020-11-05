@@ -15,6 +15,7 @@
 #include "libs/fs.mq5"
 #include "libs/chart.mq5"
 #include "libs/server.mq5"
+#include "libs/trade.mq5"
 
 //----
 // Global variables
@@ -41,16 +42,21 @@ void OnTimer() {
   if (clientMessage != "") {
     JSON json;
     json.Deserialize(clientMessage);
-    Print("current time is ", json["time"].ToInt());
+
+    if (!isOrder) {
+      switch (json["action"]) {
+        case "buy":
+          buy(10, 50);
+          isOrder = true;
+          break;
+
+        // case "sell":
+        //   sell();
+        //   isOrder = true;
+        //   break;
+      }
+    }
   }
-  // if (!isOrder) {
-  //   if (latestClientMessage == "buy") {
-  //     Print("buy right now");
-  //   }
-  //   if (latestClientMessage == "sell") {
-  //     Print("sell right now");
-  //   }
-  // }
 }
 
 // Deinitialize

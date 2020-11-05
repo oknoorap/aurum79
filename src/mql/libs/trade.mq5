@@ -35,17 +35,17 @@ void sendOrder(string action, ushort takeProfitInput, ushort stopLossInput) {
     orderAction,
     symbolInfo.NormalizePrice(stopLoss),
     symbolInfo.NormalizePrice(takeProfit)
-  ));
+  );
 }
 
 void buyOrder(ushort takeProfitInput, ushort stopLossInput) {
-  if (sendOrder("buy", takeProfitInput, stopLossInput) {
+  if (sendOrder("buy", takeProfitInput, stopLossInput)) {
     Print("Buy @", symbolInfo.Ask());
   }
 }
 
 void sellOrder(ushort takeProfitInput, ushort stopLossInput) {
-  if (sendOrder("sell", takeProfitInput, stopLossInput) {
+  if (sendOrder("sell", takeProfitInput, stopLossInput)) {
     Print("Sell @", symbolInfo.Bid());
   }
 }

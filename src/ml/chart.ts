@@ -58,13 +58,15 @@ class Chart implements IChart {
     const [ask, bid] = tick;
 
     history.splice(0, 1);
-    const [lastData] = history.slice(0, 60);
+
+    const copyhistory = history.slice(0, 60);
+    const [lastData] = copyhistory;
 
     const [, , , , lastDataTime] = lastData;
     this.isNewTick = this.lastDataTime !== lastDataTime;
     this.lastDataTime = lastDataTime;
 
-    const datahistory = history.reverse();
+    const datahistory = copyhistory.reverse();
     const data = datahistory.reduce<Data[]>(
       (prev, current, index, datahistory) => {
         const [open, high, low, close] = current;

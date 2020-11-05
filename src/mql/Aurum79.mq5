@@ -50,6 +50,10 @@ void OnTimer() {
         buyOrder(1, 5);
       }
 
+      if (action == "sell") {
+        sellOrder(1, 5);
+      }
+
       isOrder = true;
     }
   }

@@ -44,7 +44,7 @@ async function start() {
         });
 
         if (chart.isNewTick) {
-          actionBuy();
+          actionSell();
 
           // agent.predicts(series);
           // console.log(agent.result());

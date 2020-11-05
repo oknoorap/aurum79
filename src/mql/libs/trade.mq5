@@ -4,7 +4,7 @@
 CTrade trade;
 CSymbolInfo symbolInfo;
 
-void buyOrder(ushort takeProfitInput, ushort stopLossInput) {
+void sendOrder(string action, ushort takeProfitInput, ushort stopLossInput) {
   symbolInfo.Name(Symbol());
   symbolInfo.RefreshRates();
   trade.SetMarginMode();
@@ -18,19 +18,34 @@ void buyOrder(ushort takeProfitInput, ushort stopLossInput) {
     digits = 10;
   }
 
+  double orderAction = action == "buy" ? symbolInfo.Ask() : symbolInfo.Bid();
   double point = symbolInfo.Point() * digits;
+  
   double takeProfitPoint = takeProfitInput * point;
-  double takeProfit = (takeProfitPoint == 0.0) ? 0.0 : symbolInfo.Ask() + takeProfitPoint;
-  double stopLossPoint = stopLossInput * point;
-  double stopLoss = (stopLossPoint == 0.0) ? 0.0 : symbolInfo.Ask() - stopLossPoint;
+  double takeProfitValue = action == "buy" ? orderAction + takeProfitPoint : orderAction - takeProfitPoint;
+  double takeProfit = (takeProfitPoint == 0.0) ? 0.0 : takeProfitValue;
 
-  if (trade.Buy(
+  double stopLossPoint = stopLossInput * point;
+  double stopLossValue  = action == "buy" ? orderAction - stopLossPoint : orderAction + stopLossPoint;
+  double stopLoss = (stopLossPoint == 0.0) ? 0.0 : stopLossValue;
+
+  return trade.Buy(
     symbolInfo.LotsMin(),
     symbolInfo.Name(),
-    symbolInfo.Ask(),
+    orderAction,
     symbolInfo.NormalizePrice(stopLoss),
     symbolInfo.NormalizePrice(takeProfit)
-  )) {
-    Print("Order @", symbolInfo.Ask());
+  ));
+}
+
+void buyOrder(ushort takeProfitInput, ushort stopLossInput) {
+  if (sendOrder("buy", takeProfitInput, stopLossInput) {
+    Print("Buy @", symbolInfo.Ask());
+  }
+}
+
+void sellOrder(ushort takeProfitInput, ushort stopLossInput) {
+  if (sendOrder("sell", takeProfitInput, stopLossInput) {
+    Print("Sell @", symbolInfo.Bid());
   }
 }

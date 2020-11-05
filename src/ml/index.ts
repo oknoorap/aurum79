@@ -17,7 +17,7 @@ async function start() {
   const actionBuy = () => {
     client.postMessage(
       JSON.stringify({
-        type: 'action',
+        action: 'buy',
       })
     );
   };
@@ -26,7 +26,7 @@ async function start() {
   const actionSell = () => {
     client.postMessage(
       JSON.stringify({
-        type: 'sell',
+        action: 'sell',
       })
     );
   };

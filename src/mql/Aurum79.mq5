@@ -43,9 +43,11 @@ void OnTimer() {
     JSON json;
     json.Deserialize(clientMessage);
 
+    string action = json["action"].ToStr();
+
     if (!isOrder) {
-      if (json["action"] == "buy") {
-        buyOrder(10, 50);
+      if (action == "buy") {
+        buyOrder(1, 5);
       }
 
       isOrder = true;

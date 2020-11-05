@@ -54,19 +54,18 @@ class Chart implements IChart {
   /**
    * Get data series
    */
-  getSeries({ tick, history }: SeriesParams): Series {
+  getSeries({ tick, history: originalHistory }: SeriesParams): Series {
     const [ask, bid] = tick;
 
-    history.splice(0, 1);
+    originalHistory.splice(0, 1);
+    const history = originalHistory.slice(0, 60);
 
-    const copyhistory = history.slice(0, 60);
-    const [lastData] = copyhistory;
-
+    const [lastData] = history;
     const [, , , , lastDataTime] = lastData;
     this.isNewTick = this.lastDataTime !== lastDataTime;
     this.lastDataTime = lastDataTime;
 
-    const datahistory = copyhistory.reverse();
+    const datahistory = history.reverse();
     const data = datahistory.reduce<Data[]>(
       (prev, current, index, datahistory) => {
         const [open, high, low, close] = current;

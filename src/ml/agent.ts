@@ -67,7 +67,7 @@ class Agent {
    * Create model with
    *
    * Input shape
-   * - 60 (tick history data M1)
+   * - 59 (tick history data M1)
    * - 5 (Candle, Body, number, number, Trend)
    *
    * Output (2)
@@ -87,7 +87,7 @@ class Agent {
       model = await tf.loadLayersModel(`file://${modelfile}`);
     } catch {
       // Input layer
-      const inputs = tf.input({ shape: [60, 5], name: 'candlestick' });
+      const inputs = tf.input({ shape: [59, 5], name: 'candlestick' });
 
       // Hidden layer
       const hidden = tf.layers

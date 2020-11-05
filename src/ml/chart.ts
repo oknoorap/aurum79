@@ -58,7 +58,7 @@ class Chart implements IChart {
     const [ask, bid] = tick;
 
     history.splice(0, 1);
-    const [lastData] = history;
+    const [lastData] = history.slice(0, 60);
 
     const [, , , , lastDataTime] = lastData;
     this.isNewTick = this.lastDataTime !== lastDataTime;

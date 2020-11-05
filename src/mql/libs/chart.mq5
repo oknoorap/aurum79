@@ -27,7 +27,7 @@ JSON getRatesHistory() {
    MqlRates rates[];
    ArraySetAsSeries(rates, true);
    
-   int isCopied = CopyRates(_Symbol, _Period, 0, 60, rates);
+   int isCopied = CopyRates(_Symbol, _Period, 0, 70, rates);
    int historySize = ArraySize(rates);
    JSON history;
    

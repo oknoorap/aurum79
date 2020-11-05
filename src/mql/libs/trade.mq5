@@ -4,7 +4,7 @@
 CTrade trade;
 CSymbolInfo symbolInfo;
 
-void sendOrder(string action, ushort takeProfitInput, ushort stopLossInput) {
+bool sendOrder(string action, ushort takeProfitInput, ushort stopLossInput) {
   symbolInfo.Name(Symbol());
   symbolInfo.RefreshRates();
   trade.SetMarginMode();
@@ -29,7 +29,17 @@ void sendOrder(string action, ushort takeProfitInput, ushort stopLossInput) {
   double stopLossValue  = (action == "buy") ? orderAction - stopLossPoint : orderAction + stopLossPoint;
   double stopLoss = (stopLossPoint == 0.0) ? 0.0 : stopLossValue;
 
-  return trade.Buy(
+  if (action == "buy") {
+    return trade.Buy(
+      symbolInfo.LotsMin(),
+      symbolInfo.Name(),
+      orderAction,
+      symbolInfo.NormalizePrice(stopLoss),
+      symbolInfo.NormalizePrice(takeProfit)
+    );
+  }
+
+  return trade.Sell(
     symbolInfo.LotsMin(),
     symbolInfo.Name(),
     orderAction,

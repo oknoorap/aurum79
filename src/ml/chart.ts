@@ -16,18 +16,6 @@ type Body = number;
 type Ask = number;
 type Bid = number;
 
-type OHLC = {
-  open: Open;
-  high: High;
-  low: Low;
-  close: Close;
-};
-
-type Volume = {
-  candle: Candle;
-  body: Body;
-};
-
 type Tick = {
   ask: Ask;
   bid: Bid;
@@ -73,9 +61,7 @@ class Chart implements IChart {
     const [lastData] = history;
 
     const [, , , , lastDataTime] = lastData;
-    if (this.lastDataTime !== lastDataTime) {
-      this.isNewTick = true;
-    }
+    this.isNewTick = this.lastDataTime !== lastDataTime;
     this.lastDataTime = lastDataTime;
 
     const datahistory = history.reverse();

@@ -117,3 +117,6 @@ dist
 
 *.ex5
 .DS_Store
+
+# tf data path
+data/

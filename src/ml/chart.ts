@@ -92,7 +92,9 @@ class Chart implements IChart {
           const highDiff = this.diff(high, pHigh, false);
           const bodyDiff = this.diff(
             high,
-            trend === Trend.Bullish ? close : open
+            trend === Trend.Bullish || trend === Trend.Unpredictable
+              ? close
+              : open
           );
 
           reducer.push({
@@ -137,6 +139,11 @@ class Chart implements IChart {
    */
   getTrend(data: History) {
     const [open, , , close] = data;
+
+    if (open === close) {
+      return Trend.Unpredictable;
+    }
+
     return close > open ? Trend.Bullish : Trend.Bearish;
   }
   /**

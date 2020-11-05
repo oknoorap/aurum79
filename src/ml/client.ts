@@ -2,6 +2,8 @@ import net from 'net';
 import waitPort from 'wait-port';
 
 type onMessageCallback = (data: string) => void;
+type onConnectedCallback = () => void;
+type onClientStartCallback = () => Promise<void>;
 
 export enum ReceivedMessage {
   Tick = 'tick',
@@ -13,18 +15,24 @@ export enum SendMessage {
   Sell = 'sell',
 }
 
+type SocketClientOptions = {
+  port?: string | number;
+  host?: string;
+};
+
 class SocketClient {
   client: net.Socket;
   port: number;
   host: string;
   isConnected: boolean = false;
   onMessageCallbackList: onMessageCallback[] = [];
+  onConnectedCallbackList: onConnectedCallback[] = [];
   data: string = '';
 
-  constructor(
-    port: string | number = (process.env.PORT as string) || 3333,
-    host: string = (process.env.HOST as string) || '0.0.0.0'
-  ) {
+  constructor(options?: SocketClientOptions) {
+    const port = (process.env.PORT as string) || (options?.port ?? 3333);
+    const host = (process.env.HOST as string) || (options?.host ?? '0.0.0.0');
+
     this.port = parseInt(port as string);
 
     this.host = host;
@@ -33,6 +41,7 @@ class SocketClient {
 
     // Connect to socket server,
     // until port available
+    console.log('---');
     waitPort({
       port: this.port,
       host: this.host,
@@ -49,13 +58,22 @@ class SocketClient {
       });
   }
 
+  /**
+   * Connect to socket server.
+   */
   connect() {
-    /**
-     * Connect to socket server.
-     */
     this.client.connect(parseInt(this.port.toString()), this.host, () => {
       this.isConnected = true;
       console.log(`Connected to socket: ${this.host}:${this.port}`);
+    });
+
+    /**
+     * On connected callback.s
+     */
+    this.client.once('connect', () => {
+      for (const onConnected of this.onConnectedCallbackList) {
+        onConnected();
+      }
     });
 
     /**
@@ -87,6 +105,14 @@ class SocketClient {
       this.isConnected = false;
       console.log('Connection closed');
     });
+  }
+
+  /**
+   * On receiving mssage callback listener,
+   * We can have multiple callbacks here.
+   */
+  onconnected(fn: onConnectedCallback) {
+    this.onConnectedCallbackList.push(fn);
   }
 
   /**

@@ -3,14 +3,15 @@ import Chart from './chart';
 import Agent from './agent';
 
 async function start() {
-  const client = new SocketClient();
-
   const chart = new Chart();
-
   const agent = new Agent();
-  await agent.createBulkModels();
 
-  // Receive message
+  // Create or load existing models.
+  await agent.createOrLoadModels();
+  await agent.saveModels();
+
+  // Receive message from socket.
+  const client = new SocketClient();
   client.onmessage(json => {
     const { type = null, ...jsonData } = JSON.parse(json);
 
@@ -24,8 +25,8 @@ async function start() {
         });
 
         if (chart.isNewTick) {
-          const results = agent.bulkPredict(agent.input(series));
-          console.log(results);
+          agent.predicts(series);
+          console.log(agent.result());
         }
         break;
 
@@ -36,4 +37,5 @@ async function start() {
   });
 }
 
+// Start the engine.
 start();

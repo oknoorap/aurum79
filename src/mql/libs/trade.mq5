@@ -4,7 +4,7 @@
 CTrade trade;
 CSymbolInfo symbolInfo;
 
-void buy(ushort takeProfitInput, ushort stopLossInput) {
+void buyOrder(ushort takeProfitInput, ushort stopLossInput) {
   int digits = 1;
   bool isThreeDigits = symbolInfo.Digits() == 3;
   bool isFiveDigits = symbolInfo.Digits() == 5;

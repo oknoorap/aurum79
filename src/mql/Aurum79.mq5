@@ -42,20 +42,13 @@ void OnTimer() {
   if (clientMessage != "") {
     JSON json;
     json.Deserialize(clientMessage);
-    string action = json["action"];
 
     if (!isOrder) {
-      switch (action) {
-        case "buy":
-          buyOrder(10, 50);
-          isOrder = true;
-          break;
-
-        // case "sell":
-        //   sell();
-        //   isOrder = true;
-        //   break;
+      if (json["action"] == "buy") {
+        buyOrder(10, 50);
       }
+
+      isOrder = true;
     }
   }
 }

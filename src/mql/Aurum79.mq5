@@ -72,8 +72,9 @@ void OnTradeTransaction(
 ) {
   if (isCloseOrder(tx)) {
     JSON json;
+    bool result = tradeResult(tx, order);
     json["type"] = "result";
-    json["result"].Set(tradeResult(tx, order));
+    json["result"] = result;
 
     postMessage(json.Serialize());
     order.action = OrderActionIdle;

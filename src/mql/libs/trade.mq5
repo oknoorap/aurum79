@@ -60,12 +60,6 @@ bool sendOrder(OrderAction action, ushort takeProfitInput, ushort stopLossInput)
   );
 }
 
-struct Order {
-  double price;
-  ulong ticketId;
-  string action;
-};
-
 Order buyOrder(ushort takeProfitInput, ushort stopLossInput) {
   Order order;
   order.action = OrderActionBuy;
@@ -114,7 +108,7 @@ bool isCloseOrder(const MqlTradeTransaction &tx) {
   return true;
 }
 
-ulong tradeResult(const MqlTradeTransaction &tx, Order order) {
+ulong tradeResult(const MqlTradeTransaction &tx, Order &order) {
   bool status;
 
   if (tx.deal_type == DEAL_TYPE_BUY && order.action == OrderActionBuy) {

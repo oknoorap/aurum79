@@ -24,15 +24,22 @@ SOCKET64 server = INVALID_SOCKET64;
 
 // Chart stuff.
 string clientMessage = "";
-bool isOrder = false;
 bool isSendFirstMessage = false;
+Order order;
 
 // Initialization
 // Start server on port 3333.
 int OnInit() {
   server = createServer(3333);
+  order.action = OrderActionIdle;
   EventSetMillisecondTimer(100);
   return INIT_SUCCEEDED;
+}
+
+// Deinitialize
+// Stop server and close all connections.
+void OnDeinit(const int reason) {
+  stopServer(server);
 }
 
 // Start timer
@@ -45,25 +52,34 @@ void OnTimer() {
 
     string action = json["action"].ToStr();
 
-    if (!isOrder) {
+    if (order.action != OrderActionIdle) {
       if (action == "buy") {
-        buyOrder(1, 5);
+        order = buyOrder(1, 5);
       }
 
       if (action == "sell") {
-        sellOrder(1, 5);
+        order = sellOrder(1, 5);
       }
-
-      isOrder = true;
     }
   }
 }
 
-// Deinitialize
-// Stop server and close all connections.
-void OnDeinit(const int reason) {
-  stopServer(server);
+// On transactions
+void OnTradeTransaction(
+  const MqlTradeTransaction &tx,
+  const MqlTradeRequest &req,
+  const MqlTradeResult &res
+) {
+  if (isCloseOrder(tx)) {
+    JSON json;
+    json["type"] = "result";
+    json["result"] = tradeResult(tx, order);
+
+    postMessage(json.Serialize());
+    order.action = OrderActionIdle;
+  }
 }
+
 
 // On Tick
 void OnTick() {

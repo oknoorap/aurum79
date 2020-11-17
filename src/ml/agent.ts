@@ -255,7 +255,7 @@ class Agent {
       actionIdle++;
     }
 
-    const maxValue = Math.max(actionBuy, actionIdle, actionSell);
+    const maxValue = Math.max(actionBuy, actionSell);
     if (maxValue === actionBuy) {
       return Action.Buy;
     }

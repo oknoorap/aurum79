@@ -67,7 +67,6 @@ async function start() {
 
     agent.predicts(series);
     const action = agent.bestAction();
-    console.log('action', action);
 
     switch (action) {
       case Action.Buy:

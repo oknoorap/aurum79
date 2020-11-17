@@ -66,16 +66,15 @@ async function start() {
     }
 
     agent.predicts(series);
-    const action = agent.bestAction();
 
-    switch (action) {
+    switch (agent.bestAction()) {
       case Action.Buy:
-        console.log('buy', ask);
+        console.log(`buy @${ask}`);
         actionBuy();
         break;
 
       case Action.Sell:
-        console.log('sell', bid);
+        console.log(`sell @${ask}`);
         actionSell();
         break;
     }

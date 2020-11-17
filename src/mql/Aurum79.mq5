@@ -52,7 +52,7 @@ void OnTimer() {
 
     string action = json["action"].ToStr();
 
-    if (order.action != OrderActionIdle) {
+    if (order.action == OrderActionIdle) {
       if (action == "buy") {
         order = buyOrder(1, 5);
       }

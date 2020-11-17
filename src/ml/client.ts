@@ -30,11 +30,10 @@ class SocketClient {
   data: string = '';
 
   constructor(options?: SocketClientOptions) {
-    const port = (process.env.PORT as string) || (options?.port ?? 3333);
-    const host = (process.env.HOST as string) || (options?.host ?? '0.0.0.0');
+    const port = <string>process.env.PORT || (options?.port ?? 3333);
+    this.port = parseInt(<string>port);
 
-    this.port = parseInt(port as string);
-
+    const host = <string>process.env.HOST || (options?.host ?? '0.0.0.0');
     this.host = host;
 
     this.client = new net.Socket();

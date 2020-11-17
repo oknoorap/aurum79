@@ -26,7 +26,9 @@
   "author": "Ribhararnus Pracutian",
   "module": "dist/ml.esm.js",
   "devDependencies": {
+    "@types/lodash": "^4.14.165",
     "@types/mkdirp": "^1.0.1",
+    "@types/rimraf": "^3.0.0",
     "husky": "^4.2.5",
     "tsdx": "^0.13.3",
     "tslib": "^2.0.1",
@@ -36,9 +38,11 @@
     "@tensorflow/tfjs": "^2.7.0",
     "@tensorflow/tfjs-node": "^2.7.0",
     "decimal.js": "^10.2.0",
+    "lodash": "^4.17.20",
     "mkdirp": "^1.0.4",
     "nanoid": "^3.1.16",
     "ora": "^5.1.0",
+    "rimraf": "^3.0.2",
     "wait-port": "^0.2.9"
   }
 }

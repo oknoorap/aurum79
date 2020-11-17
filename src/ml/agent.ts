@@ -2,9 +2,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import ora, { Ora } from 'ora';
 import mkdirp from 'mkdirp';
+import rimraf from 'rimraf';
 import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-node';
 import { customAlphabet } from 'nanoid';
+import random from 'lodash/random';
 
 import { Data } from './chart';
 import { LayersModel } from '@tensorflow/tfjs';
@@ -20,11 +22,18 @@ type PredictMemory = {
   [key: string]: number[];
 };
 
+export enum Action {
+  Buy,
+  Idle,
+  Sell,
+}
+
 class Agent {
   models: tf.LayersModel[] = [];
   modelsNumber: number;
   namePrefix: string;
   predictMemory: PredictMemory = {};
+  inputSize: number = 59;
 
   // For spinner purpose
   spinner: Spinner;
@@ -57,7 +66,14 @@ class Agent {
     const models = modelIds.length > 0 ? modelIds : Array.from({ length });
 
     for (const id of models) {
-      this.models.push(await this.createModel(id as string));
+      this.models.push(await this.createModel(<string>id));
+    }
+
+    if (this.models.length < this.modelsNumber) {
+      this.replicate();
+      this.loading(
+        'Models number are lower than expected. Replicating models...'
+      )?.succeed();
     }
 
     this.loading('All models have been loaded.')?.succeed();
@@ -87,27 +103,31 @@ class Agent {
       model = await tf.loadLayersModel(`file://${modelfile}`);
     } catch {
       // Input layer
-      const inputs = tf.input({ shape: [59, 5], name: 'candlestick' });
+      const inputs = tf.input({
+        shape: [this.inputSize, 5],
+        name: 'candlestick',
+      });
 
       // Hidden layer
       const hidden = tf.layers
         .dense({
-          units: 256,
+          units: 1024,
           activation: 'sigmoid',
           name: 'hidden',
         })
         .apply(inputs);
 
+      // Flattening layers
       const flatten = tf.layers.flatten().apply(hidden);
 
       // Outputs layer.
-      const outputs = tf.layers
+      const outputs = <tf.SymbolicTensor>tf.layers
         .dense({
-          units: 2,
+          units: 3,
           activation: 'softmax',
           name: 'output',
         })
-        .apply(flatten) as tf.SymbolicTensor;
+        .apply(flatten);
 
       model = tf.model({ inputs, outputs, name: modelName });
     } finally {
@@ -123,6 +143,10 @@ class Agent {
     this.loading(`Model ${modelName} compiled.`);
 
     return model;
+  }
+
+  getModelById(modelName: string) {
+    return this.models.find(item => item.name === modelName);
   }
 
   /**
@@ -156,7 +180,7 @@ class Agent {
     }
 
     const modelpath = <string>this.dataPaths('models', model.name);
-    fs.unlinkSync(modelpath);
+    rimraf.sync(modelpath);
     this.models.splice(modelIndex, 1);
   }
 
@@ -204,10 +228,50 @@ class Agent {
   }
 
   /**
+   * Get best action, whether it's
+   * 0 - buy
+   * 1 - no action
+   * 2 - sell
+   */
+  bestAction() {
+    let actionBuy = 0;
+    let actionIdle = 0;
+    let actionSell = 0;
+
+    const result = this.result();
+    for (const id in result) {
+      const [buy, sell] = result[id];
+
+      if (buy > 0.8) {
+        actionBuy++;
+        continue;
+      }
+
+      if (sell > 0.8) {
+        actionSell++;
+        continue;
+      }
+
+      actionIdle++;
+    }
+
+    const maxValue = Math.max(actionBuy, actionIdle, actionSell);
+    if (maxValue === actionBuy) {
+      return Action.Buy;
+    }
+
+    if (maxValue === actionSell) {
+      return Action.Sell;
+    }
+
+    return Action.Idle;
+  }
+
+  /**
    * Predict model
    */
   predict(model: tf.LayersModel, data: tf.Tensor) {
-    return tf.util.flatten((model.predict(data) as tf.Tensor).arraySync());
+    return tf.util.flatten((<tf.Tensor>model.predict(data)).arraySync());
   }
 
   /**
@@ -220,12 +284,40 @@ class Agent {
 
     for (let i = 0; i < this.modelsNumber; i++) {
       if (!this.models[i]) {
-        this.models.push(await this.copy(this.models[count]));
+        const newModel = await this.copy(this.models[count]);
+        this.mutate(newModel);
+        this.models.push(newModel);
         count++;
       }
     }
 
     this.loading(`Replicating models`)?.succeed();
+  }
+
+  /**
+   * Mutate weights
+   */
+  mutate(model: tf.LayersModel, rate: number = 0.1) {
+    tf.tidy(() => {
+      const weights = [];
+
+      for (const weight of model.getWeights()) {
+        const clonedWeights = weight.clone();
+
+        const shape = clonedWeights.shape;
+        const values = Array.from(clonedWeights.dataSync()).map(item => {
+          if (random(0, 1, true) < rate) {
+            item = item + <number>tf.randomNormal([], 0, 1).arraySync();
+          }
+          return item;
+        });
+
+        const tensor = tf.tensor(values, shape);
+        weights.push(tensor);
+      }
+
+      model.setWeights(weights);
+    });
   }
 
   /**

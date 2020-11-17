@@ -21,7 +21,7 @@ type Tick = {
   bid: Bid;
 };
 
-type History = [Open, High, Low, Close, Time];
+export type History = [Open, High, Low, Close, Time];
 
 export type Data = {
   candle: Candle;
@@ -31,7 +31,7 @@ export type Data = {
   trend: Trend;
 };
 
-type Series = [Ask, Bid, Data[]];
+export type Series = [Ask, Bid, Data[]];
 
 type SeriesParams = {
   tick: [Ask, Bid];

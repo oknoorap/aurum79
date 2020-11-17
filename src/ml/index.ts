@@ -66,9 +66,7 @@ async function start() {
     }
 
     agent.predicts(series);
-    console.log(agent.result());
 
-    return;
     switch (agent.bestAction()) {
       case Action.Buy:
         actionBuy();
@@ -83,7 +81,9 @@ async function start() {
   /**
    * Received data when trading result occured
    */
-  function onResult(data: any) {}
+  function onResult(data: any) {
+    console.log(data);
+  }
 }
 
 // Start the engine.

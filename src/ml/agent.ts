@@ -242,12 +242,12 @@ class Agent {
     for (const id in result) {
       const [buy, sell] = result[id];
 
-      if (buy > 0.8) {
+      if (buy > 0.5) {
         actionBuy++;
         continue;
       }
 
-      if (sell > 0.8) {
+      if (sell > 0.5) {
         actionSell++;
         continue;
       }

@@ -54,7 +54,7 @@ async function start() {
    */
   function onTick(data: { tick: [number, number]; history: History[] }) {
     const { tick, history } = data;
-    const [, , series] = chart.getSeries({
+    const [ask, bid, series] = chart.getSeries({
       tick,
       history,
     });
@@ -66,13 +66,17 @@ async function start() {
     }
 
     agent.predicts(series);
+    const action = agent.bestAction();
+    console.log('action', action);
 
-    switch (agent.bestAction()) {
+    switch (action) {
       case Action.Buy:
+        console.log('buy', ask);
         actionBuy();
         break;
 
       case Action.Sell:
+        console.log('sell', bid);
         actionSell();
         break;
     }

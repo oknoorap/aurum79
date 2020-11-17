@@ -124,7 +124,7 @@ class Agent {
       const outputs = <tf.SymbolicTensor>tf.layers
         .dense({
           units: 3,
-          activation: 'sigmoid',
+          activation: 'softmax',
           name: 'output',
         })
         .apply(flatten);

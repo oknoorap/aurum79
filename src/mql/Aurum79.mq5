@@ -94,7 +94,7 @@ void OnTradeTransaction(
 
     postMessage(json.Serialize());
     resetOrderStatus(orderStatus);
-    order.action == OrderActionIdle;
+    order.action = OrderActionIdle;
   }
 }
 

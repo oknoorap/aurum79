@@ -26,12 +26,14 @@ SOCKET64 server = INVALID_SOCKET64;
 string clientMessage = "";
 bool isSendFirstMessage = false;
 Order order;
+OrderStatus orderStatus;
 
 // Initialization
 // Start server on port 3333.
 int OnInit() {
   server = createServer(3333);
   order.action = OrderActionIdle;
+  resetOrderStatus(orderStatus);
   EventSetMillisecondTimer(100);
   return INIT_SUCCEEDED;
 }
@@ -70,14 +72,28 @@ void OnTradeTransaction(
   const MqlTradeRequest &req,
   const MqlTradeResult &res
 ) {
-  if (isCloseOrder(tx)) {
+  updateOrderStatus(tx, orderStatus);
+
+  if (isOrderOpened(orderStatus)) {
+    setOrderPosition(orderStatus, OrderPositionTrading);
+  }
+
+  if (isOrderClosed(orderStatus)) {
     JSON json;
-    bool result = tradeResult(tx, order);
     json["type"] = "result";
+
+    // profit or loss
+    bool result = tradeResult(tx, orderStatus);
     json["result"] = result;
 
+    JSON data;
+    data["action"] = orderStatus.action == OrderActionBuy ? "buy" : "sell";
+    data["price"] = orderStatus.price;
+    data["closedPrice"] = orderStatus.closedPrice;
+    json["data"].Set(data);
+
     postMessage(json.Serialize());
-    order.action = OrderActionIdle;
+    resetOrderStatus(orderStatus);
   }
 }
 

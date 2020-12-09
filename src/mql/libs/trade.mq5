@@ -10,10 +10,25 @@ enum OrderAction {
   OrderActionIdle
 };
 
+enum OrderPosition {
+  OrderPositionInit,
+  OrderPositionOpen,
+  OrderPositionClose,
+  OrderPositionTrading
+};
+
 struct Order {
   double price;
   ulong ticketId;
   OrderAction action;
+};
+
+struct OrderStatus {
+  ulong id;
+  OrderAction action;
+  OrderPosition position;
+  double price;
+  double closePrice;
 };
 
 bool sendOrder(OrderAction action, ushort takeProfitInput, ushort stopLossInput) {
@@ -67,7 +82,6 @@ Order buyOrder(ushort takeProfitInput, ushort stopLossInput) {
   if (sendOrder(order.action, takeProfitInput, stopLossInput)) {
     order.ticketId = trade.ResultOrder();
     order.price = symbolInfo.Ask();
-    Print("Buy @", order.price);
     return order;
   }
 
@@ -83,7 +97,6 @@ Order sellOrder(ushort takeProfitInput, ushort stopLossInput) {
   if (sendOrder(order.action, takeProfitInput, stopLossInput)) {
     order.ticketId = trade.ResultOrder();
     order.price = symbolInfo.Bid();
-    Print("Sell @", order.price);
     return order;
   }
 
@@ -92,32 +105,72 @@ Order sellOrder(ushort takeProfitInput, ushort stopLossInput) {
   return order;
 }
 
-bool isCloseOrder(const MqlTradeTransaction &tx) {
-  if (tx.type != TRADE_TRANSACTION_HISTORY_ADD) {
-    return false;
-  }
-  
-  if (tx.order_state != ORDER_STATE_FILLED) {
-    return false;
-  }
-  
-  if (tx.price == 0.0) {
-    return false;
-  }
-
-  return true;
+void resetOrderStatus(OrderStatus &orderStatus) {
+  orderStatus.id = 0;
+  orderStatus.action = OrderActionIdle;
+  orderStatus.position = OrderPositionInit;
+  orderStatus.price = 0;
+  orderStatus.closePrice = 0;
 }
 
-ulong tradeResult(const MqlTradeTransaction &tx, Order &order) {
-  bool status;
+void setOrderPosition(OrderStatus &orderStatus, OrderPosition position) {
+  orderStatus.position = position;
+}
 
-  if (tx.deal_type == DEAL_TYPE_BUY && order.action == OrderActionBuy) {
-    status = tx.price > order.price;
+void updateOrderStatus(const MqlTradeTransaction &tx, OrderStatus &orderStatus) {
+  if (
+    tx.type == TRADE_TRANSACTION_DEAL_ADD &&
+    tx.deal > 0 &&
+    tx.order > 0 &&
+    tx.price > 0
+  ) {
+    if (
+      orderStatus.position == OrderPositionInit &&
+      tx.order == tx.position
+    ) {
+      orderStatus.position = OrderPositionOpen;
+      orderStatus.price = tx.price;
+    }
+
+    if (
+     orderStatus.position == OrderPositionTrading &&
+     tx.order != tx.position &&
+     tx.position == orderStatus.id
+    ) {
+      orderStatus.position = OrderPositionClose;
+      orderStatus.closePrice = tx.price;
+    }
+  }
+
+  if (tx.type == TRADE_TRANSACTION_HISTORY_ADD && tx.order_state == ORDER_STATE_FILLED) {
+    orderStatus.id = tx.order;
+    
+    if (tx.order_type == ORDER_TYPE_BUY) {
+      orderStatus.action = OrderActionBuy;
+    }
+
+    if (tx.order_type == ORDER_TYPE_SELL) {
+      orderStatus.action = OrderActionSell;
+    }
+  }
+}
+
+bool isOrderOpened(OrderStatus &orderStatus) {
+  return orderStatus.action != OrderActionIdle && orderStatus.position == OrderPositionOpen;
+}
+
+bool isOrderClosed(OrderStatus &orderStatus) {
+  return orderStatus.action != OrderActionIdle && orderStatus.position == OrderPositionClose;
+}
+
+bool tradeResult(OrderStatus &orderStatus) {
+  if (orderStatus.action == OrderActionBuy) {
+    return orderStatus.closePrice > orderStatus.price;
   }
   
-  if (tx.deal_type == DEAL_TYPE_SELL && order.action == OrderActionSell) {
-    status = tx.price < order.price;
+  if (orderStatus.action == OrderActionSell) {
+    return orderStatus.closePrice < orderStatus.price;
   }
   
-  return status;
+  return false;
 }

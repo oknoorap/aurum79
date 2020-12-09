@@ -83,13 +83,13 @@ void OnTradeTransaction(
     json["type"] = "result";
 
     // profit or loss
-    bool result = tradeResult(tx, orderStatus);
+    bool result = tradeResult(orderStatus);
     json["result"] = result;
 
     JSON data;
     data["action"] = orderStatus.action == OrderActionBuy ? "buy" : "sell";
     data["price"] = orderStatus.price;
-    data["closedPrice"] = orderStatus.closedPrice;
+    data["closedPrice"] = orderStatus.closePrice;
     json["data"].Set(data);
 
     postMessage(json.Serialize());

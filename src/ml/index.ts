@@ -3,13 +3,21 @@ import Chart, { History } from './chart';
 import Agent, { Action } from './agent';
 
 async function start() {
+  // Trade status
+  let isTrading = false;
+
+  // Chart
+  const chart = new Chart();
+
+  // Socket client
+  const client = new SocketClient();
+
   // Create or load existing models.
   const agent = new Agent();
   await agent.createOrLoadModels();
   await agent.saveModels();
 
   // Receive message from socket.
-  const client = new SocketClient();
   client.onmessage(json => {
     const { type = null, ...data } = JSON.parse(json);
 
@@ -24,13 +32,11 @@ async function start() {
     }
   });
 
-  // Chart
-  const chart = new Chart();
-
   /**
    * Buy Action
    */
   function actionBuy() {
+    isTrading = true;
     client.postMessage(
       JSON.stringify({
         action: 'buy',
@@ -42,6 +48,7 @@ async function start() {
    * Sell Action
    */
   function actionSell() {
+    isTrading = true;
     client.postMessage(
       JSON.stringify({
         action: 'sell',
@@ -69,12 +76,10 @@ async function start() {
 
     switch (agent.bestAction()) {
       case Action.Buy:
-        console.log(`buy @${ask}`);
         actionBuy();
         break;
 
       case Action.Sell:
-        console.log(`sell @${ask}`);
         actionSell();
         break;
     }
@@ -83,8 +88,9 @@ async function start() {
   /**
    * Received data when trading result occured
    */
-  function onResult(data: any) {
-    console.log(data);
+  function onResult({ result, action }: { result: boolean; action: number }) {
+    isTrading = false;
+    console.log({ result, action });
   }
 }
 

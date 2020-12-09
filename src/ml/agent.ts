@@ -294,6 +294,10 @@ class Agent {
     this.loading(`Replicating models`)?.succeed();
   }
 
+  async keepModels(action: Action) {
+    const sellModel = Object.keys(this.predictMemory).map;
+  }
+
   /**
    * Mutate weights
    */

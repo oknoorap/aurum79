@@ -36,24 +36,24 @@ async function start() {
    * Buy Action
    */
   function actionBuy() {
-    isTrading = true;
     client.postMessage(
       JSON.stringify({
         action: 'buy',
       })
     );
+    isTrading = true;
   }
 
   /**
    * Sell Action
    */
   function actionSell() {
-    isTrading = true;
     client.postMessage(
       JSON.stringify({
         action: 'sell',
       })
     );
+    isTrading = true;
   }
 
   /**
@@ -69,6 +69,10 @@ async function start() {
     const isNewTick = chart.isNewTick;
     const isValidInput = series.length === agent.inputSize;
     if (!(isNewTick && isValidInput)) {
+      return;
+    }
+
+    if (isTrading) {
       return;
     }
 
@@ -88,9 +92,17 @@ async function start() {
   /**
    * Received data when trading result occured
    */
-  function onResult({ result, action }: { result: boolean; action: number }) {
+  function onResult({
+    result,
+    action,
+    data,
+  }: {
+    result: boolean;
+    action: number;
+    data: any;
+  }) {
+    console.log({ action, result, data });
     isTrading = false;
-    console.log({ result, action });
   }
 }
 

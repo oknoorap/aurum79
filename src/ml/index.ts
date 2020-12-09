@@ -70,8 +70,6 @@ async function start() {
       history,
     });
 
-    console.log({ isTrading, tick });
-
     const isNewTick = chart.isNewTick;
     const isValidInput = series.length === agent.inputSize;
     if (!(isNewTick && isValidInput)) {

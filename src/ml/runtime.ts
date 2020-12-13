@@ -111,9 +111,7 @@ export default async function runtime(isTrain: boolean = false) {
         iterator++;
       }
 
-      if (result) {
-        await agent.keepBestModels();
-      }
+      await agent.keepBestModels();
     }
 
     isTrading = false;

@@ -99,6 +99,8 @@ export default async function runtime(isTrain: boolean = false) {
    * Received data when trading result occured
    */
   async function onResult({ result, data }: { result: boolean; data: any }) {
+    isTrading = false;
+
     // If prediction correct
     // Keeps noAction or takeAction models
     if (isTrain) {
@@ -113,7 +115,5 @@ export default async function runtime(isTrain: boolean = false) {
 
       await agent.keepBestModels();
     }
-
-    isTrading = false;
   }
 }

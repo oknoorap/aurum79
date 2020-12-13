@@ -216,6 +216,7 @@ class Agent {
         ]),
       ]);
 
+      this.predictMemory = {};
       for (const model of this.models) {
         this.predictMemory[model.name] = this.predict(model, data);
       }
@@ -263,6 +264,8 @@ class Agent {
     };
 
     const maxValue = Math.max($noAction, $takeAction);
+
+    this.bestActionMemory = [];
     if (maxValue === $takeAction) {
       pushToBestActionMemory(takeActionIds);
       return Action.TakeAction;

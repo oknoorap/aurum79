@@ -161,6 +161,7 @@ class Chart implements IChart {
       const currentDiff = candleDiff - current.bodyDiff;
       console.log({
         candleDiff,
+        candle: current.candle,
         chighdiff: current.highDiff,
         pbodydiff: prev.bodyDiff,
         cbodydiff: current.bodyDiff,

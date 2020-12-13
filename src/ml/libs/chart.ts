@@ -156,21 +156,12 @@ class Chart implements IChart {
       $3.trend === Trend.Bearish;
 
     const isDownTrend = (current: Data, prev: Data) => {
-      const candleDiff = current.candle - current.highDiff;
-      const prevDiff = candleDiff - prev.bodyDiff;
-      const currentDiff = candleDiff - current.bodyDiff;
-      console.log({
-        candleDiff,
-        candle: current.candle,
-        chighdiff: current.highDiff,
-        pbodydiff: prev.bodyDiff,
-        cbodydiff: current.bodyDiff,
-      });
+      const totalCandle = current.candle - current.highDiff;
+      const prevDiff = totalCandle - prev.bodyDiff;
+      const currentDiff = totalCandle + current.highDiff - current.bodyDiff;
       return prevDiff > currentDiff;
     };
 
-    isDownTrend($1, $2);
-    return false;
     return (
       isBearish &&
       isDownTrend($1, $2) &&
@@ -191,13 +182,12 @@ class Chart implements IChart {
       $3.trend === Trend.Bullish;
 
     const isUpTrend = (current: Data, prev: Data) => {
-      const candleDiff = current.candle - current.highDiff;
-      const prevDiff = candleDiff - prev.bodyDiff;
-      const currentDiff = candleDiff - current.bodyDiff;
+      const totalCandle = current.candle - current.highDiff;
+      const prevDiff = totalCandle - prev.bodyDiff;
+      const currentDiff = totalCandle + current.highDiff - current.bodyDiff;
       return currentDiff > prevDiff;
     };
 
-    return false;
     return (
       isBullish && isUpTrend($1, $2) && isUpTrend($2, $3) && isUpTrend($3, $4)
     );

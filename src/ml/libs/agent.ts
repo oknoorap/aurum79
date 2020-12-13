@@ -39,7 +39,7 @@ class Agent {
   spinner: Spinner;
 
   static defaultOptions = {
-    modelsNumber: 500,
+    modelsNumber: 150,
     namePrefix: "model",
   };
 

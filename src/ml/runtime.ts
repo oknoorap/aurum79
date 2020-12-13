@@ -80,7 +80,7 @@ export default async function runtime(isTrain: boolean = false) {
     // Agent predictions
     // We're now save agent prediction to agent.predictMemory
     agent.predicts(chart.series);
-    agent.saveBestAction();
+    action = agent.saveBestAction();
 
     if (!isTrain && action === Action.NoAction) {
       return;

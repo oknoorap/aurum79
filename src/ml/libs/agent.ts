@@ -238,6 +238,8 @@ class Agent {
    */
   saveBestAction() {
     const result = this.result();
+    let $noAction = 0;
+    let $takeAction = 0;
     this.bestActionMemory = [];
 
     for (const id in result) {
@@ -245,16 +247,25 @@ class Agent {
 
       if (noAction > 0.8) {
         this.bestActionMemory.push([Action.NoAction, id]);
+        $noAction++;
       }
 
       if (takeAction > 0.8) {
         this.bestActionMemory.push([Action.TakeAction, id]);
+        $takeAction++;
       }
 
       if (noAction < 0.8 && takeAction < 0.8) {
         this.bestActionMemory.push([Action.Unpredictable, id]);
       }
     }
+
+    const maxValue = Math.max($noAction, $takeAction);
+    if (maxValue === $takeAction) {
+      return Action.TakeAction;
+    }
+
+    return Action.NoAction;
   }
 
   /**

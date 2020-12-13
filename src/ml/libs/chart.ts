@@ -159,9 +159,12 @@ class Chart implements IChart {
       const candleDiff = current.candle - current.highDiff;
       const prevDiff = candleDiff - prev.bodyDiff;
       const currentDiff = candleDiff - current.bodyDiff;
+      console.log({ current, prev });
       return prevDiff > currentDiff;
     };
 
+    isDownTrend($1, $2);
+    return false;
     return (
       isBearish &&
       isDownTrend($1, $2) &&
@@ -188,6 +191,7 @@ class Chart implements IChart {
       return currentDiff > prevDiff;
     };
 
+    return false;
     return (
       isBullish && isUpTrend($1, $2) && isUpTrend($2, $3) && isUpTrend($3, $4)
     );

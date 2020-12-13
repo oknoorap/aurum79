@@ -290,6 +290,9 @@ class Agent {
     for (let i = 0; i < this.modelsNumber; i++) {
       if (!this.models[i]) {
         const newModel = await this.copy(this.models[count]);
+        this.loading(
+          `Succeed replicate ${newModel.name}, counter: ${i}, ${count}`
+        );
         this.mutate(newModel);
         this.models.push(newModel);
         count++;

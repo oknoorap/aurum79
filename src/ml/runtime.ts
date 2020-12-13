@@ -106,13 +106,14 @@ export default async function runtime(isTrain: boolean = false) {
 
       if (iterator === 10) {
         await agent.saveModels();
+        iterator = 0;
+      } else {
+        iterator++;
       }
 
       if (result) {
         await agent.keepBestModels();
       }
-
-      iterator++;
     }
 
     isTrading = false;

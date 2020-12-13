@@ -25,6 +25,7 @@ type PredictMemory = {
 export enum Action {
   NoAction,
   TakeAction,
+  Unpredictable,
 }
 
 class Agent {
@@ -32,7 +33,7 @@ class Agent {
   modelsNumber: number;
   namePrefix: string;
   predictMemory: PredictMemory = {};
-  bestActionMemory: string[] = [];
+  bestActionMemory: [Action, string][] = [];
   inputSize: number = 59;
 
   // For spinner purpose
@@ -235,44 +236,25 @@ class Agent {
    * 0 - no action
    * 1 - action (sell / buy)
    */
-  bestAction() {
-    let $noAction = 0;
-    let $takeAction = 0;
-
+  saveBestAction() {
     const result = this.result();
-    const noActionIds: string[] = [];
-    const takeActionIds: string[] = [];
+    this.bestActionMemory = [];
 
     for (const id in result) {
       const [noAction, takeAction] = result[id];
 
       if (noAction > 0.8) {
-        noActionIds.push(id);
-        $noAction++;
+        this.bestActionMemory.push([Action.NoAction, id]);
       }
 
       if (takeAction > 0.8) {
-        takeActionIds.push(id);
-        $takeAction++;
+        this.bestActionMemory.push([Action.TakeAction, id]);
+      }
+
+      if (noAction < 0.8 && takeAction < 0.8) {
+        this.bestActionMemory.push([Action.Unpredictable, id]);
       }
     }
-
-    const pushToBestActionMemory = (ids: string[]) => {
-      for (const id of ids) {
-        this.bestActionMemory.push(id);
-      }
-    };
-
-    const maxValue = Math.max($noAction, $takeAction);
-
-    this.bestActionMemory = [];
-    if (maxValue === $takeAction) {
-      pushToBestActionMemory(takeActionIds);
-      return Action.TakeAction;
-    }
-
-    pushToBestActionMemory(noActionIds);
-    return Action.NoAction;
   }
 
   /**
@@ -309,15 +291,20 @@ class Agent {
   /**
    * Keep models that have correct prediction
    */
-  async keepBestModels() {
-    for (const id in this.predictMemory) {
-      if (!this.bestActionMemory.includes(id)) {
-        const model = this.getModelById(id);
-        if (model) {
-          await this.destroyModel(model);
-        }
+  async keepCorrectModels(bestAction: Action) {
+    for (const [action, id] of this.bestActionMemory) {
+      if (action === bestAction) {
+        continue;
       }
+
+      const model = this.getModelById(id);
+      if (!model) {
+        continue;
+      }
+
+      await this.destroyModel(model);
     }
+
     await this.replicate();
   }
 

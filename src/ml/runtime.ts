@@ -80,7 +80,7 @@ export default async function runtime(isTrain: boolean = false) {
     // Agent predictions
     // We're now save agent prediction to agent.predictMemory
     agent.predicts(chart.series);
-    action = agent.bestAction();
+    agent.saveBestAction();
 
     if (!isTrain && action === Action.NoAction) {
       return;
@@ -107,13 +107,15 @@ export default async function runtime(isTrain: boolean = false) {
       console.log({ result, data, iterator });
 
       if (iterator === 10) {
-        await agent.saveModels();
+        agent.saveModels();
         iterator = 0;
       } else {
         iterator++;
       }
 
-      await agent.keepBestModels();
+      await agent.keepCorrectModels(
+        result ? Action.TakeAction : Action.NoAction
+      );
     }
   }
 }

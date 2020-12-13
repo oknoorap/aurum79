@@ -23,9 +23,8 @@ type PredictMemory = {
 };
 
 export enum Action {
-  Buy,
-  Idle,
-  Sell,
+  NoAction,
+  TakeAction,
 }
 
 class Agent {
@@ -44,13 +43,10 @@ class Agent {
   };
 
   constructor(agentOptions?: AgentOptions) {
-    const {
-      modelsNumber = Agent.defaultOptions.modelsNumber,
-      namePrefix = Agent.defaultOptions.namePrefix,
-    } = agentOptions || {};
-
-    this.modelsNumber = modelsNumber;
-    this.namePrefix = namePrefix;
+    this.modelsNumber =
+      agentOptions?.modelsNumber || Agent.defaultOptions.modelsNumber;
+    this.namePrefix =
+      agentOptions?.namePrefix || Agent.defaultOptions.namePrefix;
   }
 
   /**
@@ -60,7 +56,7 @@ class Agent {
     const modelspath = <string>this.dataPaths('models');
     const modelIds = fs
       .readdirSync(modelspath)
-      .filter(item => fs.statSync(path.join(modelspath, item)).isDirectory());
+      .filter((item) => fs.statSync(path.join(modelspath, item)).isDirectory());
 
     const length = this.modelsNumber;
     const models = modelIds.length > 0 ? modelIds : Array.from({ length });
@@ -123,7 +119,7 @@ class Agent {
       // Outputs layer.
       const outputs = <tf.SymbolicTensor>tf.layers
         .dense({
-          units: 3,
+          units: 2,
           activation: 'softmax',
           name: 'output',
         })
@@ -146,7 +142,7 @@ class Agent {
   }
 
   getModelById(modelName: string) {
-    return this.models.find(item => item.name === modelName);
+    return this.models.find((item) => item.name === modelName);
   }
 
   /**
@@ -174,7 +170,9 @@ class Agent {
    * Remove models from list
    */
   async destroyModel(model: LayersModel) {
-    const modelIndex = this.models.findIndex(item => item.name === model.name);
+    const modelIndex = this.models.findIndex(
+      (item) => item.name === model.name
+    );
     if (modelIndex < 0) {
       return;
     }
@@ -229,42 +227,32 @@ class Agent {
 
   /**
    * Get best action, whether it's
-   * 0 - buy
-   * 1 - no action
-   * 2 - sell
+   * 0 - no action
+   * 1 - action (sell / buy)
    */
   bestAction() {
-    let actionBuy = 0;
-    let actionIdle = 0;
-    let actionSell = 0;
+    let $noAction = 0;
+    let $takeAction = 0;
 
     const result = this.result();
     for (const id in result) {
-      const [buy, sell] = result[id];
+      const [noAction, takeAction] = result[id];
 
-      if (buy > 0.5) {
-        actionBuy++;
-        continue;
+      if (noAction > 0.8) {
+        $noAction++;
       }
 
-      if (sell > 0.5) {
-        actionSell++;
-        continue;
+      if (takeAction > 0.8) {
+        $takeAction++;
       }
-
-      actionIdle++;
     }
 
-    const maxValue = Math.max(actionBuy, actionSell);
-    if (maxValue === actionBuy) {
-      return Action.Buy;
+    const maxValue = Math.max($noAction, $takeAction);
+    if (maxValue === $noAction) {
+      return Action.NoAction;
     }
 
-    if (maxValue === actionSell) {
-      return Action.Sell;
-    }
-
-    return Action.Idle;
+    return Action.TakeAction;
   }
 
   /**
@@ -309,7 +297,7 @@ class Agent {
         const clonedWeights = weight.clone();
 
         const shape = clonedWeights.shape;
-        const values = Array.from(clonedWeights.dataSync()).map(item => {
+        const values = Array.from(clonedWeights.dataSync()).map((item) => {
           if (random(0, 1, true) < rate) {
             item = item + <number>tf.randomNormal([], 0, 1).arraySync();
           }
@@ -328,14 +316,14 @@ class Agent {
    * Copy weights
    */
   async copy(model: tf.LayersModel) {
-    return new Promise<tf.LayersModel>(resolve => {
+    return new Promise<tf.LayersModel>((resolve) => {
       tf.tidy(() => {
         const weights: tf.Tensor[] = [];
         for (const weight of model.getWeights()) {
           weights.push(weight.clone());
         }
 
-        this.createModel().then(newModel => {
+        this.createModel().then((newModel) => {
           this.loading(`Copy ${model.name} as ${newModel.name}`);
           newModel.setWeights(weights);
           resolve(newModel);

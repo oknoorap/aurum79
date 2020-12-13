@@ -104,6 +104,13 @@ class SocketClient {
       this.isConnected = false;
       console.log('Connection closed');
     });
+
+    /**
+     * On socket error.
+     */
+    this.client.on('error', err => {
+      console.log('Error', err.name, err.message);
+    });
   }
 
   /**

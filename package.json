@@ -7,20 +7,19 @@
     "node": ">=10"
   },
   "scripts": {
-    "dev": "tsdx watch --entry src/ml/index.ts",
-    "start": "node dist/index",
+    "start": "node dist/train",
     "build": "yarn build:js && yarn build:mql",
-    "build:js": "tsdx build --entry src/ml/index.ts",
-    "build:mql": "cd scripts && build",
-    "test": "tsdx test --entry src/ml/index.ts",
-    "lint": "tsdx lint --entry src/ml/index.ts"
-  },
-  "peerDependencies": {},
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "build:js": "yarn build:js:main && yarn build:js:train && yarn minify && yarn copy && yarn rm:file",
+    "build:js:main": "yarn ncc build src/ml/index.ts --minify --no-cache --target es2020 -o dist/index",
+    "build:js:train": "yarn ncc build src/ml/train.ts --minify --no-cache --target es2020 -o dist/train",
+    "minify": "yarn minify:main && yarn minify:train",
+    "minify:main": "terser --compress --mangle --comments=false --output=dist/index/main.js dist/index/index.js",
+    "minify:train": "terser --compress --mangle --comments=false --output=dist/train/train.js dist/train/index.js",
+    "copy": "yarn copy:deps && yarn copy:lib",
+    "copy:deps": "copyfiles -f ./node_modules/@tensorflow/tfjs-node/package.json ./dist/index/main.js ./dist/train/train.js dist",
+    "copy:lib": "copyfiles -u 3 ./node_modules/@tensorflow/tfjs-node/lib/*.* dist",
+    "rm:file": "rimraf dist/index dist/train",
+    "build:mql": "cd scripts && build"
   },
   "name": "aurum-79",
   "author": "Ribhararnus Pracutian",
@@ -29,18 +28,18 @@
     "@types/lodash": "^4.14.165",
     "@types/mkdirp": "^1.0.1",
     "@types/rimraf": "^3.0.0",
-    "husky": "^4.2.5",
-    "tsdx": "^0.13.3",
-    "tslib": "^2.0.1",
-    "typescript": "^4.0.2"
+    "@vercel/ncc": "^0.25.1",
+    "copyfiles": "^2.4.1",
+    "terser": "^5.5.1",
+    "typescript": "^4.1.3"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^2.7.0",
     "@tensorflow/tfjs-node": "^2.7.0",
-    "decimal.js": "^10.2.0",
+    "decimal.js": "^10.2.1",
     "lodash": "^4.17.20",
     "mkdirp": "^1.0.4",
-    "nanoid": "^3.1.16",
+    "nanoid": "^3.1.20",
     "ora": "^5.1.0",
     "rimraf": "^3.0.2",
     "wait-port": "^0.2.9"

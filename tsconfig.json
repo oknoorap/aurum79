@@ -1,17 +1,16 @@
 {
   "include": ["src", "types"],
   "compilerOptions": {
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
+    "esModuleInterop": true,
     "importHelpers": true,
-    "declaration": true,
-    "sourceMap": true,
-    "rootDir": "src/ml",
-    "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
+    "lib": ["dom", "esnext"],
+    "module": "esnext",
     "moduleResolution": "node",
-    "jsx": "react",
-    "esModuleInterop": true
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "rootDir": "src/ml",
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext"
   }
 }

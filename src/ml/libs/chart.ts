@@ -39,13 +39,13 @@ type SeriesParams = {
 };
 
 interface IChart {
-  getSeries: (params: SeriesParams) => Series;
+  loadSeries: (params: SeriesParams) => void;
 }
 
 class Chart implements IChart {
   lastDataTime: string = '';
   isNewTick: boolean = false;
-  data: Data[] = [];
+  series: Data[] = [];
   tick: Tick = {
     ask: 0,
     bid: 0,
@@ -54,7 +54,7 @@ class Chart implements IChart {
   /**
    * Get data series
    */
-  getSeries({ tick, history: originalHistory }: SeriesParams): Series {
+  loadSeries({ tick, history: originalHistory }: SeriesParams) {
     const [ask, bid] = tick;
 
     originalHistory.splice(0, 1);
@@ -96,13 +96,11 @@ class Chart implements IChart {
         return reducer;
       }, []);
 
-    this.data = data;
+    this.series = data;
     this.tick = {
       ask,
       bid,
     };
-
-    return [this.tick.ask, this.tick.bid, this.data];
   }
 
   /**
@@ -147,6 +145,20 @@ class Chart implements IChart {
     }
 
     return number;
+  }
+
+  /**
+   * Detects if it's time to buy
+   */
+  isBuy() {
+    return false;
+  }
+
+  /**
+   * Detects if it's time to sell
+   */
+  isSell() {
+    return false;
   }
 }
 

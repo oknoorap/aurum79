@@ -14,7 +14,9 @@ export default async function runtime(isTrain: boolean = false) {
   // Create or load existing models.
   const agent = new Agent();
   await agent.createOrLoadModels();
-  return;
+  if (isTrain) {
+    await agent.saveModels();
+  }
 
   // Socket client
   // Waiting for agents model loaded
@@ -101,14 +103,16 @@ export default async function runtime(isTrain: boolean = false) {
     // Keeps noAction or takeAction models
     if (isTrain) {
       console.log({ result, data });
+
+      if (iterator === 10) {
+        await agent.saveModels();
+      }
+
       if (result) {
         await agent.keepBestModels();
       }
     }
 
-    if (iterator === 10) {
-      await agent.saveModels();
-    }
     isTrading = false;
     iterator++;
   }

@@ -102,7 +102,7 @@ export default async function runtime(isTrain: boolean = false) {
     // If prediction correct
     // Keeps noAction or takeAction models
     if (isTrain) {
-      console.log({ result, data });
+      console.log({ result, data, iterator });
 
       if (iterator === 10) {
         await agent.saveModels();
@@ -111,9 +111,10 @@ export default async function runtime(isTrain: boolean = false) {
       if (result) {
         await agent.keepBestModels();
       }
+
+      iterator++;
     }
 
     isTrading = false;
-    iterator++;
   }
 }

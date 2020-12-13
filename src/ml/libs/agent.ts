@@ -96,7 +96,10 @@ class Agent {
     const modelfile = <string>this.dataPaths("models", modelName, "model.json");
 
     try {
-      this.loading(`Load ${modelfile}...`);
+      if (fs.existsSync(modelfile)) {
+        this.loading(`Load ${modelfile}...`);
+      }
+
       model = await tf.loadLayersModel(`file://${modelfile}`);
     } catch {
       // Input layer

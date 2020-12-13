@@ -148,14 +148,26 @@ class Chart implements IChart {
    * Detects if it's time to buy
    */
   isBuy() {
-    return true;
+    const [$1, $2, $3, $4] = this.series.reverse();
+    return (
+      ($1.bodyDiff < $2.bodyDiff &&
+        $2.bodyDiff < $3.bodyDiff &&
+        $4.trend === Trend.Bearish) ||
+      $4.trend === Trend.Unpredictable
+    );
   }
 
   /**
    * Detects if it's time to sell
    */
   isSell() {
-    return true;
+    const [$1, $2, $3, $4] = this.series.reverse();
+    return (
+      ($1.bodyDiff > $2.bodyDiff &&
+        $2.bodyDiff > $3.bodyDiff &&
+        $4.trend === Trend.Bullish) ||
+      $4.trend === Trend.Unpredictable
+    );
   }
 }
 

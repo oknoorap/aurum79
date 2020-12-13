@@ -236,26 +236,37 @@ class Agent {
     let $takeAction = 0;
 
     const result = this.result();
+    const noActionIds: string[] = [];
+    const takeActionIds: string[] = [];
+
     for (const id in result) {
       const [noAction, takeAction] = result[id];
 
       if (noAction > 0.8) {
-        this.bestActionMemory.push(id);
+        noActionIds.push(id);
         $noAction++;
       }
 
       if (takeAction > 0.8) {
-        this.bestActionMemory.push(id);
+        takeActionIds.push(id);
         $takeAction++;
       }
     }
 
+    const pushToBestActionMemory = (ids: string[]) => {
+      for (const id of ids) {
+        this.bestActionMemory.push(id);
+      }
+    };
+
     const maxValue = Math.max($noAction, $takeAction);
-    if (maxValue === $noAction) {
-      return Action.NoAction;
+    if (maxValue === $takeAction) {
+      pushToBestActionMemory(takeActionIds);
+      return Action.TakeAction;
     }
 
-    return Action.TakeAction;
+    pushToBestActionMemory(noActionIds);
+    return Action.NoAction;
   }
 
   /**
@@ -289,10 +300,12 @@ class Agent {
    * Keep models that have correct prediction
    */
   async keepBestModels() {
-    for (const id of this.bestActionMemory) {
-      const model = this.getModelById(id);
-      if (model) {
-        await this.destroyModel(model);
+    for (const id in this.predictMemory) {
+      if (!this.bestActionMemory.includes(id)) {
+        const model = this.getModelById(id);
+        if (model) {
+          await this.destroyModel(model);
+        }
       }
     }
     await this.replicate();

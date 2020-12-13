@@ -149,11 +149,24 @@ class Chart implements IChart {
    */
   isBuy() {
     const [$1, $2, $3, $4] = this.series.reverse();
+
+    const isBearish =
+      $1.trend === Trend.Bearish &&
+      $2.trend === Trend.Bearish &&
+      $3.trend === Trend.Bearish;
+
+    const isDownTrend = (current: Data, prev: Data) => {
+      const candleDiff = current.candle - current.highDiff;
+      const prevDiff = candleDiff - prev.bodyDiff;
+      const currentDiff = candleDiff - current.bodyDiff;
+      return prevDiff > currentDiff;
+    };
+
     return (
-      ($1.bodyDiff < $2.bodyDiff &&
-        $2.bodyDiff < $3.bodyDiff &&
-        $4.trend === Trend.Bearish) ||
-      $4.trend === Trend.Unpredictable
+      isBearish &&
+      isDownTrend($1, $2) &&
+      isDownTrend($2, $3) &&
+      isDownTrend($3, $4)
     );
   }
 
@@ -162,11 +175,21 @@ class Chart implements IChart {
    */
   isSell() {
     const [$1, $2, $3, $4] = this.series.reverse();
+
+    const isBullish =
+      $1.trend === Trend.Bullish &&
+      $2.trend === Trend.Bullish &&
+      $3.trend === Trend.Bullish;
+
+    const isUpTrend = (current: Data, prev: Data) => {
+      const candleDiff = current.candle - current.highDiff;
+      const prevDiff = candleDiff - prev.bodyDiff;
+      const currentDiff = candleDiff - current.bodyDiff;
+      return currentDiff > prevDiff;
+    };
+
     return (
-      ($1.bodyDiff > $2.bodyDiff &&
-        $2.bodyDiff > $3.bodyDiff &&
-        $4.trend === Trend.Bullish) ||
-      $4.trend === Trend.Unpredictable
+      isBullish && isUpTrend($1, $2) && isUpTrend($2, $3) && isUpTrend($3, $4)
     );
   }
 }

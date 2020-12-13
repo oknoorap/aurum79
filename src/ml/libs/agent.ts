@@ -1,15 +1,15 @@
-import * as path from 'path';
-import * as fs from 'fs';
-import ora, { Ora } from 'ora';
-import mkdirp from 'mkdirp';
-import rimraf from 'rimraf';
-import * as tf from '@tensorflow/tfjs';
-import '@tensorflow/tfjs-node';
-import { customAlphabet } from 'nanoid';
-import random from 'lodash/random';
+import * as path from "path";
+import * as fs from "fs";
+import ora, { Ora } from "ora";
+import mkdirp from "mkdirp";
+import rimraf from "rimraf";
+import * as tf from "@tensorflow/tfjs";
+import "@tensorflow/tfjs-node";
+import { customAlphabet } from "nanoid";
+import random from "lodash/random";
 
-import { Data } from './chart';
-import { LayersModel } from '@tensorflow/tfjs';
+import { Data } from "./chart";
+import { LayersModel } from "@tensorflow/tfjs";
 
 type AgentOptions = {
   modelsNumber?: number;
@@ -32,6 +32,7 @@ class Agent {
   modelsNumber: number;
   namePrefix: string;
   predictMemory: PredictMemory = {};
+  bestActionMemory: string[] = [];
   inputSize: number = 59;
 
   // For spinner purpose
@@ -39,7 +40,7 @@ class Agent {
 
   static defaultOptions = {
     modelsNumber: 500,
-    namePrefix: 'model',
+    namePrefix: "model",
   };
 
   constructor(agentOptions?: AgentOptions) {
@@ -53,7 +54,7 @@ class Agent {
    * Build models based on models size
    */
   async createOrLoadModels() {
-    const modelspath = <string>this.dataPaths('models');
+    const modelspath = <string>this.dataPaths("models");
     const modelIds = fs
       .readdirSync(modelspath)
       .filter((item) => fs.statSync(path.join(modelspath, item)).isDirectory());
@@ -68,11 +69,11 @@ class Agent {
     if (this.models.length < this.modelsNumber) {
       this.replicate();
       this.loading(
-        'Models number are lower than expected. Replicating models...'
+        "Models number are lower than expected. Replicating models..."
       )?.succeed();
     }
 
-    this.loading('All models have been loaded.')?.succeed();
+    this.loading("All models have been loaded.")?.succeed();
   }
 
   /**
@@ -92,7 +93,7 @@ class Agent {
     let model: tf.LayersModel;
 
     // model's path in pwd()/data
-    const modelfile = <string>this.dataPaths('models', modelName, 'model.json');
+    const modelfile = <string>this.dataPaths("models", modelName, "model.json");
 
     try {
       this.loading(`Load ${modelfile}...`);
@@ -101,15 +102,15 @@ class Agent {
       // Input layer
       const inputs = tf.input({
         shape: [this.inputSize, 5],
-        name: 'candlestick',
+        name: "candlestick",
       });
 
       // Hidden layer
       const hidden = tf.layers
         .dense({
           units: 1024,
-          activation: 'sigmoid',
-          name: 'hidden',
+          activation: "sigmoid",
+          name: "hidden",
         })
         .apply(inputs);
 
@@ -120,8 +121,8 @@ class Agent {
       const outputs = <tf.SymbolicTensor>tf.layers
         .dense({
           units: 2,
-          activation: 'softmax',
-          name: 'output',
+          activation: "softmax",
+          name: "output",
         })
         .apply(flatten);
 
@@ -133,7 +134,7 @@ class Agent {
     // Let's compile our model.
     model.compile({
       optimizer: tf.train.adam(1e-3),
-      loss: 'meanSquaredError',
+      loss: "meanSquaredError",
     });
 
     this.loading(`Model ${modelName} compiled.`);
@@ -153,14 +154,14 @@ class Agent {
       await this.saveModel(model);
     }
 
-    this.loading('All models have been saved.')?.succeed();
+    this.loading("All models have been saved.")?.succeed();
   }
 
   /**
    * Save model to model's directory
    */
   async saveModel(model: LayersModel) {
-    const modelfolder = <string>this.dataPaths('models', model.name);
+    const modelfolder = <string>this.dataPaths("models", model.name);
     mkdirp.sync(modelfolder);
     await model.save(`file://${modelfolder}`);
     this.loading(`Model ${model.name} saved!`);
@@ -177,7 +178,7 @@ class Agent {
       return;
     }
 
-    const modelpath = <string>this.dataPaths('models', model.name);
+    const modelpath = <string>this.dataPaths("models", model.name);
     rimraf.sync(modelpath);
     this.models.splice(modelIndex, 1);
   }
@@ -239,10 +240,12 @@ class Agent {
       const [noAction, takeAction] = result[id];
 
       if (noAction > 0.8) {
+        this.bestActionMemory.push(id);
         $noAction++;
       }
 
       if (takeAction > 0.8) {
+        this.bestActionMemory.push(id);
         $takeAction++;
       }
     }
@@ -282,8 +285,17 @@ class Agent {
     this.loading(`Replicating models`)?.succeed();
   }
 
-  async keepModels(action: Action) {
-    const sellModel = Object.keys(this.predictMemory).map;
+  /**
+   * Keep models that have correct prediction
+   */
+  async keepBestModels() {
+    for (const id of this.bestActionMemory) {
+      const model = this.getModelById(id);
+      if (model) {
+        await this.destroyModel(model);
+      }
+    }
+    await this.replicate();
   }
 
   /**
@@ -335,22 +347,22 @@ class Agent {
   /**
    * Models data path
    */
-  dataPaths(pathName?: 'data' | 'logs' | 'models', ...paths: string[]) {
-    const data = path.join(process.cwd(), 'data');
+  dataPaths(pathName?: "data" | "logs" | "models", ...paths: string[]) {
+    const data = path.join(process.cwd(), "data");
     mkdirp.sync(data);
-    if (pathName === 'data') {
+    if (pathName === "data") {
       return path.join(data, ...paths);
     }
 
-    const logs = path.join(data, 'logs');
+    const logs = path.join(data, "logs");
     mkdirp.sync(logs);
-    if (pathName === 'logs') {
+    if (pathName === "logs") {
       return path.join(logs, ...paths);
     }
 
-    const models = path.join(data, 'models');
+    const models = path.join(data, "models");
     mkdirp.sync(models);
-    if (pathName === 'models') {
+    if (pathName === "models") {
       return path.join(models, ...paths);
     }
 
@@ -364,12 +376,12 @@ class Agent {
   /**
    * Spinner logger
    */
-  loading(text: string = '', isStop: boolean = false) {
+  loading(text: string = "", isStop: boolean = false) {
     if (!this.spinner) {
       this.spinner = ora();
     }
 
-    this.spinner.color = 'cyan';
+    this.spinner.color = "cyan";
     this.spinner.text = text;
 
     if (isStop) {
@@ -385,7 +397,7 @@ class Agent {
    * Random 6 digit ID
    */
   randomId() {
-    return customAlphabet('1234567890abcdefghijklmn', 6)();
+    return customAlphabet("1234567890abcdefghijklmn", 6)();
   }
 }
 

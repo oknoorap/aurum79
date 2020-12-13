@@ -1,18 +1,17 @@
-import net from 'net';
-import waitPort from 'wait-port';
+import net from "net";
+import waitPort from "wait-port";
 
-type onMessageCallback = (data: string) => void;
+type onMessageCallback = (data: string) => Promise<void>;
 type onConnectedCallback = () => void;
-type onClientStartCallback = () => Promise<void>;
 
 export enum ReceivedMessage {
-  Tick = 'tick',
-  Result = 'result',
+  Tick = "tick",
+  Result = "result",
 }
 
 export enum SendMessage {
-  Buy = 'buy',
-  Sell = 'sell',
+  Buy = "buy",
+  Sell = "sell",
 }
 
 type SocketClientOptions = {
@@ -27,32 +26,32 @@ class SocketClient {
   isConnected: boolean = false;
   onMessageCallbackList: onMessageCallback[] = [];
   onConnectedCallbackList: onConnectedCallback[] = [];
-  data: string = '';
+  data: string = "";
 
   constructor(options?: SocketClientOptions) {
     const port = <string>process.env.PORT || (options?.port ?? 3333);
     this.port = parseInt(<string>port);
 
-    const host = <string>process.env.HOST || (options?.host ?? '0.0.0.0');
+    const host = <string>process.env.HOST || (options?.host ?? "0.0.0.0");
     this.host = host;
 
     this.client = new net.Socket();
 
     // Connect to socket server,
     // until port available
-    console.log('---');
+    console.log("---");
     waitPort({
       port: this.port,
       host: this.host,
     })
-      .then(open => {
+      .then((open) => {
         if (open) {
           this.connect();
         } else {
           console.log(`Timeout when connecting to ${host}:${port}`);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err.message);
       });
   }
@@ -69,7 +68,7 @@ class SocketClient {
     /**
      * On connected callback.s
      */
-    this.client.once('connect', () => {
+    this.client.once("connect", () => {
       for (const onConnected of this.onConnectedCallbackList) {
         onConnected();
       }
@@ -78,7 +77,7 @@ class SocketClient {
     /**
      * On receiving data from socket server.
      */
-    this.client.on('data', (data: string) => {
+    this.client.on("data", async (data: string) => {
       let index = 0;
 
       // Buffering only when json is valid
@@ -87,7 +86,7 @@ class SocketClient {
           const json = this.data.substring(0, index);
           JSON.parse(json);
           for (const onMessage of this.onMessageCallbackList) {
-            onMessage(json);
+            await onMessage(json);
           }
           this.data = this.data.substring(index, this.data.length);
         } catch {
@@ -100,16 +99,16 @@ class SocketClient {
     /**
      * On socket closed.
      */
-    this.client.on('close', () => {
+    this.client.on("close", () => {
       this.isConnected = false;
-      console.log('Connection closed');
+      console.log("Connection closed");
     });
 
     /**
      * On socket error.
      */
-    this.client.on('error', err => {
-      console.log('Error', err.name, err.message);
+    this.client.on("error", (err) => {
+      console.log("Error", err.name, err.message);
     });
   }
 

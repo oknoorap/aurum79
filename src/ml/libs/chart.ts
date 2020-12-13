@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js';
+import Decimal from "decimal.js";
 
 enum Trend {
   Bullish,
@@ -43,7 +43,7 @@ interface IChart {
 }
 
 class Chart implements IChart {
-  lastDataTime: string = '';
+  lastDataTime: string = "";
   isNewTick: boolean = false;
   series: Data[] = [];
   tick: Tick = {
@@ -134,10 +134,7 @@ class Chart implements IChart {
    */
   diff(float: number, minusf: number, isAbs: boolean = true) {
     const number = parseInt(
-      new Decimal(float)
-        .minus(minusf)
-        .toString()
-        .replace('.', '0')
+      new Decimal(float).minus(minusf).toString().replace(".", "0")
     );
 
     if (isAbs) {
@@ -151,14 +148,14 @@ class Chart implements IChart {
    * Detects if it's time to buy
    */
   isBuy() {
-    return false;
+    return true;
   }
 
   /**
    * Detects if it's time to sell
    */
   isSell() {
-    return false;
+    return true;
   }
 }
 

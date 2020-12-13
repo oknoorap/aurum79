@@ -1,10 +1,12 @@
-import SocketClient, { ReceivedMessage } from './libs/client';
-import Chart, { History } from './libs/chart';
-import Agent from './libs/agent';
+import SocketClient, { ReceivedMessage } from "./libs/client";
+import Chart, { History } from "./libs/chart";
+import Agent, { Action } from "./libs/agent";
 
 export default async function runtime(isTrain: boolean = false) {
   // Trade status
   let isTrading = false;
+  let iterator = 0;
+  let action: Action;
 
   // Chart
   const chart = new Chart();
@@ -15,10 +17,9 @@ export default async function runtime(isTrain: boolean = false) {
   // Create or load existing models.
   const agent = new Agent();
   await agent.createOrLoadModels();
-  await agent.saveModels();
 
   // Receive message from socket.
-  client.onmessage(json => {
+  client.onmessage(async (json) => {
     const { type = null, ...data } = JSON.parse(json);
 
     switch (type) {
@@ -39,7 +40,7 @@ export default async function runtime(isTrain: boolean = false) {
     isTrading = true;
     client.postMessage(
       JSON.stringify({
-        action: 'buy',
+        action: "buy",
       })
     );
   }
@@ -51,7 +52,7 @@ export default async function runtime(isTrain: boolean = false) {
     isTrading = true;
     client.postMessage(
       JSON.stringify({
-        action: 'sell',
+        action: "sell",
       })
     );
   }
@@ -75,6 +76,11 @@ export default async function runtime(isTrain: boolean = false) {
     // Agent predictions
     // We're now save agent prediction to agent.predictMemory
     agent.predicts(chart.series);
+    action = agent.bestAction();
+
+    if (!isTrain && action === Action.NoAction) {
+      return;
+    }
 
     if (chart.isBuy()) {
       actionBuy();
@@ -88,8 +94,20 @@ export default async function runtime(isTrain: boolean = false) {
   /**
    * Received data when trading result occured
    */
-  function onResult({ result, data }: { result: boolean; data: any }) {
-    console.log({ result, data });
+  async function onResult({ result, data }: { result: boolean; data: any }) {
+    // If prediction correct
+    // Keeps noAction or takeAction models
+    if (isTrain) {
+      console.log({ result, data });
+      if (result) {
+        await agent.keepBestModels();
+      }
+    }
+
+    if (iterator === 10) {
+      await agent.saveModels();
+    }
     isTrading = false;
+    iterator++;
   }
 }

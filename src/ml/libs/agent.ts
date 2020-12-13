@@ -292,8 +292,9 @@ class Agent {
         const newModel = await this.copy(this.models[count]);
         this.loading(
           `Succeed replicate ${newModel.name}, counter: ${i}, ${count}`
-        );
+        )?.succeed();
         this.mutate(newModel);
+        await this.saveModel(newModel);
         this.models.push(newModel);
         count++;
       }

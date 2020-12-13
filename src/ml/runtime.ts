@@ -106,7 +106,7 @@ export default async function runtime(isTrain: boolean = false) {
       console.log({ result, data, iterator });
 
       if (iterator === 10) {
-        agent.saveModels();
+        await agent.saveModels();
         iterator = 0;
       } else {
         iterator++;

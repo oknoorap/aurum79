@@ -236,7 +236,7 @@ class Agent {
    * 0 - no action
    * 1 - action (sell / buy)
    */
-  saveBestAction() {
+  getBestAction() {
     const result = this.result();
     let $noAction = 0;
     let $takeAction = 0;

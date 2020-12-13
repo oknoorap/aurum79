@@ -6,7 +6,6 @@ export default async function runtime(isTrain: boolean = false) {
   // Trade status
   let isTrading = false;
   let iterator = 0;
-  let action: Action;
 
   // Chart
   const chart = new Chart();
@@ -80,7 +79,7 @@ export default async function runtime(isTrain: boolean = false) {
     // Agent predictions
     // We're now save agent prediction to agent.predictMemory
     agent.predicts(chart.series);
-    action = agent.saveBestAction();
+    const action = agent.getBestAction();
 
     if (!isTrain && action === Action.NoAction) {
       return;

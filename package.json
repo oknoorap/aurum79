@@ -17,7 +17,7 @@
     "minify:train": "terser --compress --mangle --comments=false --output=dist/train/train.js dist/train/index.js",
     "copy": "yarn copy:deps && yarn copy:lib",
     "copy:deps": "copyfiles -f ./node_modules/@tensorflow/tfjs-node/package.json ./dist/index/main.js ./dist/train/train.js dist",
-    "copy:lib": "copyfiles -u 3 ./node_modules/@tensorflow/tfjs-node/lib/*.* dist",
+    "copy:lib": "copyfiles -u 3 ./node_modules/@tensorflow/tfjs-node/lib/**/*.* dist",
     "rm:file": "rimraf dist/index dist/train",
     "build:mql": "cd scripts && build"
   },

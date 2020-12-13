@@ -35,6 +35,8 @@ class Agent {
   predictMemory: PredictMemory = {};
   bestActionMemory: [Action, string][] = [];
   inputSize: number = 59;
+  isReplicating: boolean = false;
+  isSaving: boolean = false;
 
   // For spinner purpose
   spinner: Spinner;
@@ -165,16 +167,22 @@ class Agent {
    * Save model to model's directory
    */
   async saveModel(model: LayersModel) {
+    this.isSaving = true;
     const modelfolder = <string>this.dataPaths("models", model.name);
     mkdirp.sync(modelfolder);
     await model.save(`file://${modelfolder}`);
     this.loading(`Model ${model.name} saved!`);
+    this.isSaving = false;
   }
 
   /**
    * Remove models from list
    */
   async destroyModel(model: LayersModel) {
+    if (this.isReplicating || this.isSaving) {
+      return;
+    }
+
     const modelIndex = this.models.findIndex(
       (item) => item.name === model.name
     );
@@ -281,6 +289,7 @@ class Agent {
    * and the quota of modelsNumber was being removed
    */
   async replicate() {
+    this.isReplicating = true;
     let count = 0;
 
     for (let i = 0; i < this.modelsNumber; i++) {
@@ -297,6 +306,7 @@ class Agent {
     }
 
     this.loading(`Replicating models`)?.succeed();
+    this.isReplicating = false;
   }
 
   /**

@@ -11,12 +11,14 @@ export default async function runtime(isTrain: boolean = false) {
   // Chart
   const chart = new Chart();
 
-  // Socket client
-  const client = new SocketClient();
-
   // Create or load existing models.
   const agent = new Agent();
   await agent.createOrLoadModels();
+  return;
+
+  // Socket client
+  // Waiting for agents model loaded
+  const client = new SocketClient();
 
   // Receive message from socket.
   client.onmessage(async (json) => {

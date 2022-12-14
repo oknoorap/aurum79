@@ -1,16 +1,8 @@
 {
-  "include": ["src", "types"],
+  "compileOnSave": true,
   "compilerOptions": {
     "esModuleInterop": true,
-    "importHelpers": true,
-    "lib": ["dom", "esnext"],
-    "module": "esnext",
     "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "rootDir": "src/ml",
-    "sourceMap": true,
-    "strict": true,
     "target": "esnext"
   }
 }

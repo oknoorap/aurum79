@@ -1,6 +1,6 @@
 {
   "name": "aurum79",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Aurum79 is a JavaScript library that provides a client for connecting to the MetaTrader 5 (MT5) trading platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

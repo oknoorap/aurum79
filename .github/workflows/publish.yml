@@ -22,9 +22,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies and build 🔧
-        run:
-          - pnpm install
-          - pnpm build
+        run: pnpm install && pnpm build
 
       - name: Publish package on NPM 📦
         run: npm publish

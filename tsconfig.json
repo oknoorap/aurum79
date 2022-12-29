@@ -3,6 +3,11 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "target": "esnext"
+    "target": "esnext",
+    "baseUrl": "./",
+    "paths": {
+      "@constants/*": ["./src/constants/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
   }
 }

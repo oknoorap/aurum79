@@ -22,7 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-*.ex5
-
-image-class-output/BUY/*
-image-class-output/SELL/*

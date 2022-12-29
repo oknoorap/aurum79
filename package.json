@@ -26,5 +26,8 @@
     "date-fns": "^2.29.3",
     "echarts": "^5.4.1",
     "wait-port": "^1.0.4"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }

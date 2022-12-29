@@ -1,47 +1,30 @@
 {
+  "name": "aurum79",
   "version": "1.0.0",
-  "license": "MIT",
-  "main": "dist/node/index.js",
-  "typings": "dist/node/index.d.ts",
-  "engines": {
-    "node": ">=10"
-  },
+  "description": "Aurum79 is a JavaScript library that provides a client for connecting to the MetaTrader 5 (MT5) trading platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "start": "node dist/ml/train",
-    "build": "yarn build:js && yarn build:mql",
-    "build:js": "yarn build:js:main && yarn build:js:train && yarn minify && yarn copy && yarn rm:file",
-    "build:js:main": "yarn ncc build src/ml/index.ts --minify --no-cache --target es2020 -o dist/ml/index",
-    "build:js:train": "yarn ncc build src/ml/train.ts --minify --no-cache --target es2020 -o dist/ml/train",
-    "minify": "yarn minify:main && yarn minify:train",
-    "minify:main": "terser --compress --mangle --comments=false --output=dist/ml/index/main.js dist/ml/index/index.js",
-    "minify:train": "terser --compress --mangle --comments=false --output=dist/ml/train/train.js dist/ml/train/index.js",
-    "copy": "yarn copy:deps && yarn copy:lib",
-    "copy:deps": "copyfiles -f ./node_modules/@tensorflow/tfjs-node/package.json ./dist/ml/index/main.js ./dist/ml/train/train.js dist/ml",
-    "copy:lib": "copyfiles -u 3 ./node_modules/@tensorflow/tfjs-node/lib/**/*.* dist/ml",
-    "rm:file": "rimraf dist/ml/index dist/ml/train",
-    "build:mql": "cd scripts && build"
+    "build": "tsup src/index.ts --dts",
+    "dev": "tsup src/index.ts --dts --watch",
+    "start:example-server": "node dist/server",
+    "dev:example-server": "tsup examples/server.ts --watch"
   },
-  "name": "aurum-79",
-  "author": "Ribhararnus Pracutian",
-  "module": "dist/ml.esm.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@types/lodash": "^4.14.165",
-    "@types/mkdirp": "^1.0.1",
-    "@types/rimraf": "^3.0.0",
-    "@vercel/ncc": "^0.25.1",
-    "copyfiles": "^2.4.1",
-    "terser": "^5.5.1",
-    "typescript": "^4.1.3"
+    "@types/node": "^18.11.15",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.4"
+  },
+  "overrides": {
+    "seedrandom": "^3.0.5"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^2.7.0",
-    "@tensorflow/tfjs-node": "^2.7.0",
-    "decimal.js": "^10.2.1",
-    "lodash": "^4.17.20",
-    "mkdirp": "^1.0.4",
-    "nanoid": "^3.1.20",
-    "ora": "^5.1.0",
-    "rimraf": "^3.0.2",
-    "wait-port": "^0.2.9"
+    "canvas": "^2.10.2",
+    "date-fns": "^2.29.3",
+    "echarts": "^5.4.1",
+    "wait-port": "^1.0.4"
   }
 }

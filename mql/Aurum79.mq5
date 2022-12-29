@@ -4,11 +4,19 @@
 //---
 #define pkgName "Aurum79"
 #define pkgVersion "1.00"
-#define pkgDescription "Reinforcement learning trading bot, it's fun and makes you rich"
-#define pkgCopyright "Copyright 2020, Ribhararnus Pracutian."
+#define pkgDescription "Automated trading with MetaTrader5 and Javascript through socket connections can lead to wealth."
+#define pkgCopyright "Copyright 2022, Ribhararnus Pracutian."
+#define pkgRepository "https://github.com/oknoorap"
 #property version pkgVersion
 #property description pkgDescription
 #property copyright pkgCopyright
+#property link pkgRepository
+
+//--
+// Parameters
+input int ServerPort=3333;
+input ushort TakeProfit=10;
+input ushort StopLoss=50;
 
 //---
 // Import sections
@@ -29,9 +37,9 @@ Order order;
 OrderStatus orderStatus;
 
 // Initialization
-// Start server on port 3333.
+// Start server on port ServerPort, default is 3333.
 int OnInit() {
-  server = createServer(3333);
+  server = createServer(ServerPort);
   order.action = OrderActionIdle;
   resetOrderStatus(orderStatus);
   EventSetMillisecondTimer(100);
@@ -53,14 +61,16 @@ void OnTimer() {
     json.Deserialize(clientMessage);
 
     string action = json["action"].ToStr();
+    ushort tp = TakeProfit / 10;
+    ushort sl = StopLoss / 10;
 
     if (order.action == OrderActionIdle) {
       if (action == "buy") {
-        order = buyOrder(1, 5);
+        order = buyOrder(tp, sl);
       }
 
       if (action == "sell") {
-        order = sellOrder(1, 5);
+        order = sellOrder(tp, sl);
       }
     }
   }

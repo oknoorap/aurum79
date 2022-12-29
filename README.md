@@ -1,99 +1,96 @@
-# TSDX User Guide
+# Aurum79
+As a chemical element with the symbol Au and atomic number 79, aurum, commonly known as gold, has long been esteemed for its associations with wealth and luxury. The Aurum79 JavaScript library offers a client for connecting to the MetaTrader 5 trading platform, potentially aiding users in achieving financial success through trading.
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+It is possible to utilize `tensorflow.js` for predicting prices, as well as for fetching forex calendar or other relevant events, allowing for the combination of technical and fundamental analysis. Additionally, using javascript can be a more convenient option than scripting in MQL5, as there may be fewer restrictions and difficulties.
 
-> This TSDX setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+---
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+## Installation
 
-## Commands
+Prerequisites:
 
-TSDX scaffolds your new library inside `/src`.
+* NodeJS (latest version or LTS)
+* MT5 client
 
-To run TSDX, use:
+Install from package manager:
 
-```bash
-npm start # or yarn start
+**NPM**  
+> `npm install aurum79 --save`
+
+**Yarn**  
+> `yarn add aurum79`
+
+**PNPM**
+> `pnpm add aurum79`
+
+---
+
+## Usage
+
+To utilize the aurum79 module in your project, you will first need to download the compiled EA from the `mql/Aurum79.ex5` directory or compile it yourself. Once this is done, activate it within the MetaTrader5 client prior to running your script.
+
+An example of how to utilize the `aurum79` module in your project is provided below:
+
+```typescript
+import {
+  MetaTraderClient,
+  MetaTraderClientActionType,
+  MetaTraderClientTradingStatus,
+} from 'aurum79';
+
+const client = new MetaTraderNode();
+
+/**
+ * Listening tick event from MetaTrader5
+ */
+client.on('tick', ({ tick, history, chart, status, action }) => {
+  // Your technical decision here
+  // e.g using machine learning library such as Tensorflow.js
+  
+  // If prediction BUY
+  action('BUY');
+
+  // If Prediction SELL
+  action('SELL');
+
+  // Status, 0 = IDLE, 1 = TRADING
+  console.log({ status })
+
+  // Tick price
+  console.log({ tick });
+
+  // Print all time-series historical data -60 bar
+  console.log({ history });
+
+  // Candlestick chart buffer
+  // You can save buffer as image
+  fs.writeFileSync(
+    path.join('image', `${new Date().toISOString()}.png`),
+    chart
+  );
+});
+
+/**
+ * Listening action triggers
+ */
+client.on('action', ({ type, data }) => {
+  // Save action into log or database
+  console.log({ type });
+});
+
+/**
+ * Listening result when trading is finished
+ */
+client.on('result', ({ result, data }) => {
+  // Save action into log or database
+  console.log({ result, data });
+});
+
+// Start MetaTrader5 client
+// Custom port: client.start(8080);
+// Default port is 3333
+client.start();
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
-
-To do a one-off build, use `npm run build` or `yarn build`.
-
-To run tests, use `npm test` or `yarn test`.
-
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.tsx       # EDIT THIS
-/test
-  blah.test.tsx   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
-```
-
-### Rollup
-
-TSDX uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
-
-### TypeScript
-
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
-
-## Continuous Integration
-
-### GitHub Actions
-
-A simple action is included that runs these steps on all pushes:
-
-- Installs deps w/ cache
-- Lints, tests, and builds
-
-## Optimizations
-
-Please see the main `tsdx` [optimizations docs](https://github.com/palmerhq/tsdx#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
-```
-
-You can also choose to install and use [invariant](https://github.com/palmerhq/tsdx#invariant) and [warning](https://github.com/palmerhq/tsdx#warning) functions.
-
-## Module Formats
-
-CJS, ESModules, and UMD module formats are supported.
-
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
-
-## Named Exports
-
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
-
-## Including Styles
-
-There are many ways to ship styles, including with CSS-in-JS. TSDX has no opinion on this, configure how you like.
-
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
-
-## Publishing to NPM
-
-We recommend using [np](https://github.com/sindresorhus/np).
+### License
+MIT (c) copyrighted 2002 by [Ribhararnus Pracutian](https://github.com/oknoorap).

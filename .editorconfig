@@ -1,8 +1,6 @@
 root = true
 
-[*.{ts,js,json,mq5,bat}]
+[*]
 indent_style = space
 indent_size = 2
-
-[*.*]
 insert_final_newline = true

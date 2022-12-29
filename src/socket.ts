@@ -1,4 +1,4 @@
-import net from "net";
+import net from "node:net";
 import waitPort from "wait-port";
 
 type onMessageCallback = (data: string) => Promise<void>;
@@ -19,7 +19,7 @@ type SocketClientOptions = {
   host?: string;
 };
 
-class SocketClient {
+export class SocketClient {
   client: net.Socket;
   port: number;
   host: string;
@@ -137,5 +137,3 @@ class SocketClient {
     }
   }
 }
-
-export default SocketClient;

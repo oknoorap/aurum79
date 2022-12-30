@@ -38,7 +38,7 @@ import {
   MetaTraderClientTradingStatus,
 } from 'aurum79';
 
-const client = new MetaTraderNode();
+const client = new MetaTraderClient();
 
 /**
  * Listening tick event from MetaTrader5
@@ -46,12 +46,13 @@ const client = new MetaTraderNode();
 client.on('tick', ({ tick, history, chart, status, action }) => {
   // Your technical decision here
   // e.g using machine learning library such as Tensorflow.js
-  
-  // If prediction BUY
-  action('BUY');
+  if (status !== MetaTraderClientTradingStatus.TRADING) {
+    // If prediction BUY
+    action(MetaTraderClientActionType.BUY);
 
-  // If Prediction SELL
-  action('SELL');
+    // If Prediction SELL
+    action(MetaTraderClientActionType.SELL);
+  }
 
   // Status, 0 = IDLE, 1 = TRADING
   console.log({ status })
@@ -93,4 +94,4 @@ client.start();
 ```
 
 ### License
-MIT (c) copyrighted 2002 by [Ribhararnus Pracutian](https://github.com/oknoorap).
+MIT (c) copyrighted 2022 by [Ribhararnus Pracutian](https://github.com/oknoorap).
